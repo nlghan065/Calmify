@@ -1,0 +1,37 @@
+.navbar {
+  position: fixed; /* 👈 giữ cố định */
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999; /* 👈 đảm bảo nằm trên mọi section */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 64px;
+  background-color: rgba(255, 255, 255, 0.9); /* 👈 thêm nền trong suốt nhẹ để dễ đọc */
+  backdrop-filter: blur(10px); /* 👌 tạo hiệu ứng mờ đẹp */
+  transition: background-color 0.3s ease;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1c1c1e;
+}
+
+.navLinks {
+  display: flex;
+  list-style: none;
+  gap: 2rem;
+}
+
+.navLinks li {
+  font-size: 1rem;
+  color: #333;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.navLinks li:hover {
+  color: #0055ff;
+}

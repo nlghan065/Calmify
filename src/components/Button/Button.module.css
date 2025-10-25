@@ -1,0 +1,31 @@
+.primary {
+  background-color: #0055ff;
+  color: white;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 22px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.primary:hover {
+  background-color: #003fd1;
+}
+
+.outline {
+  margin-top: 32px;
+  padding: 12px 28px;
+  border-radius: 999px;
+  border: 1px solid #0055ff;
+  background-color: transparent;
+  color: #0055ff;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.outline:hover {
+  background-color: #0055ff;
+  color: white;
+}

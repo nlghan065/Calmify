@@ -1,0 +1,60 @@
+.section {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Inter', sans-serif;
+  padding: 0 10%; /* Chỉ padding ngang */
+  text-align: center;
+  box-sizing: border-box; /* Đảm bảo padding không làm tràn */
+  overflow: hidden; /* Ẩn phần vượt quá */
+}
+
+.title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #111;
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.description {
+  position: relative;
+  color: #333;
+  font-size: 1.1rem;
+  font-weight: 400;
+  line-height: 1.9;
+  max-width: 680px;
+  text-align: left;
+  margin: 0 auto 60px auto;
+  letter-spacing: 0.2px;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+/* thêm dấu ngoặc kép tinh tế */
+.description::before {
+  content: '“';
+  font-size: 2rem;
+  color: #999;
+  position: absolute;
+  left: 0;
+  top: -10px;
+}
+
+.description::after {
+  content: '”';
+  font-size: 2rem;
+  color: #999;
+  position: absolute;
+  bottom: -10px;
+  right: 0;
+}
+
+.content {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}

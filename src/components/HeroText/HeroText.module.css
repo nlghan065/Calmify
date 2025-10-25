@@ -1,0 +1,17 @@
+.textContent {
+  flex: 1;
+  max-width: 550px;
+}
+
+.textContent h1 {
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: #1c1c1e;
+  line-height: 1.4;
+}
+
+.textContent p {
+  margin-top: 20px;
+  font-size: 1rem;
+  color: #444;
+}

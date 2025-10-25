@@ -1,0 +1,25 @@
+.card {
+  background-color: #fffefe;
+  border-radius: 16px;
+  padding: 24px;
+  width: 260px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.heroSection {
+  height: 100vh;
+  width: 100%;
+  background-color: #c0c0c0;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Inter', sans-serif;
+}
+
+.content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100vh;
+  padding: 0 10%;
+}
