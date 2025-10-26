@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./Style.module.css";
-import plantImg from "@/assets/images/plant.jpg";
+import plantImg from "@/assets/images/plant.png";
 const CalmifySteps = () => {
   return (
     <section className={styles.container}>
@@ -23,32 +23,35 @@ const CalmifySteps = () => {
         <div className={styles.stepLine}></div>
 
         <div className={styles.step}>
+          <span className={styles.stepLabel}></span>
           <div className={`${styles.shape} ${styles.greenCircle}`}></div>
-          <div>
-            <p className={styles.stepTitle}>“Hiểu bản thân”</p>
-            <p className={styles.stepDesc}>Để tiến về phía trước</p>
+          <div className={styles.stepText}>
+            <p className={styles.stepTitle}>Hiểu bản thân</p>
+            <p className={styles.stepDesc}>“Để tiến về phía trước”</p>
           </div>
         </div>
 
         <div className={styles.step}>
+          <span className={styles.stepLabel}>AI</span>
+          <div className={`${styles.shape} ${styles.greenwCircle}`}></div>
+          <div className={styles.stepText}>
+            <p className={styles.stepDesc}>
+              “Không ai biết bạn – chỉ lắng nghe bạn”
+            </p>
+          </div>
+        </div>
+
+        <div className={styles.step}>
+          <span className={styles.stepLabel}>TEST</span>
           <div className={`${styles.shape} ${styles.yellowDiamond}`}></div>
-          <div>
-            <p className={styles.stepTitle}>TEST</p>
+          <div className={styles.stepText}>
             <p className={styles.stepDesc}>
               “Dành vài phút để biết thêm về mình”
             </p>
           </div>
         </div>
 
-        <div className={styles.step}>
-          <div className={`${styles.shape} ${styles.orangeCircle}`}></div>
-          <div>
-            <p className={styles.stepTitle}>AI</p>
-            <p className={styles.stepDesc}>
-              “Không ai biết bạn – chỉ lắng nghe bạn”
-            </p>
-          </div>
-        </div>
+        <div className={styles.lineSquare}></div>
 
         <p className={styles.footerText}>
           “Chỉ cần một bước – Calmify sẽ cùng bạn.”

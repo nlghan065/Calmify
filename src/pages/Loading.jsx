@@ -17,6 +17,7 @@ import HomeIntro from "@/features/loading/HomeIntro";
 import HighlightFeatures from "@/features/loading/HighlightFeatures";
 import TestimonialsSection from "@/features/loading/TestimonialsSection";
 import CalmifySteps from "@/features/loading/CalmifySteps";
+import FinalSection from "@/features/loading/FinalSection";
 
 export default function Loading() {
   // Khởi tạo fullpage.js khi trang load
@@ -45,13 +46,18 @@ export default function Loading() {
         <HighlightFeatures />
       </div>
 
+      {/* Section: Từng bước */}
+      <div className="section" data-anchor="calmifysteps">
+        <CalmifySteps />
+      </div>
+
       {/* Section: Cảm nhận */}
       <div className="section" data-anchor="testimonials">
         <TestimonialsSection />
       </div>
-
-      <div className="section" data-anchor="calmifysteps">
-        <CalmifySteps />
+      {/* Section: final */}
+      <div className="section" data-anchor="final">
+        <FinalSection />
       </div>
     </div>
   );

@@ -15,11 +15,12 @@
   padding: 0 10%;
 }
 .featureSection {
-  background: linear-gradient(180deg, var(--color-bg) 0%, #c4b9e7 100%);
+  background: linear-gradient(180deg, var(--color-bg) 0%, #c9b6ff 100%);
   padding: 100px var(--container-padding);
   text-align: center;
 }
 
+/* phần tính năng */
 .section {
   background: linear-gradient(
     180deg,
@@ -99,97 +100,344 @@ p {
   font-size: 0.95rem;
   line-height: 1.6;
 }
+
+/* các bước */
 .container {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  background: linear-gradient(to right, #e6f7ee, #e9f9f9);
+  align-items: center;
+  background: linear-gradient(180deg, #c9b6ff 0%, #f3ffd9 100%);
+  gap: 60px;
   padding: 60px 100px;
   flex-wrap: wrap;
+  font-family: "Inter", sans-serif;
+  box-sizing: border-box;
+
+  /* ✅ Sửa phần tràn */
+  min-height: 100vh;
+  overflow: hidden; /* chặn tràn nhỏ */
+  margin: 0;
 }
 
+/* Cột bên trái */
 .left {
-  width: 45%;
+  flex: 1 1 45%;
   position: relative;
+  min-width: 300px;
 }
 
+/* Tiêu đề */
 .title {
-  font-size: 28px;
-  color: #333;
+  font-size: 2rem;
+  color: var(--color-primary-dark, #222);
+  font-weight: 700;
   line-height: 1.4;
-  font-weight: 600;
+  margin-bottom: 20px;
 }
 
+/* Trích dẫn hoặc mô tả */
 .quote {
-  margin-top: 16px;
   color: #555;
-  font-style: italic;
+  line-height: 1.6;
+  font-size: 1rem;
 }
 
+/* Hình ảnh bên phải */
 .plant {
-  width: 180px;
-  margin-top: 40px;
+  flex: 1 1 45%;
+  max-width: 320px;
+  width: 100%;
+  height: auto;
+  margin: 0 auto;
+  display: block;
 }
 
+/* ✅ Responsive */
+@media (max-width: 900px) {
+  .container {
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+  }
+
+  .left {
+    width: 100%;
+    text-align: center;
+  }
+
+  .plant {
+    margin-top: 40px;
+    max-width: 250px;
+  }
+}
+
+/* Bên phải */
 .right {
-  width: 45%;
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  gap: 65px;
+  margin-top: 20px;
+  margin-left: -10px; /* đẩy toàn bộ cột sát trái hơn */
 }
 
+/* Đường dọc nối các bước */
 .stepLine {
   position: absolute;
-  left: 12px;
-  top: 15px;
-  bottom: 80px;
+  top: 0;
+  bottom: 0;
+  left: 15px;
   width: 2px;
-  background-color: #ccc;
+  background-color: rgba(0, 0, 0, 0.18);
   z-index: 0;
 }
 
+/* Mỗi bước */
 .step {
+  position: relative;
   display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 25px 0;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
   z-index: 1;
+  padding-left: 55px;
+  margin-bottom: 6px;
 }
 
+/* Nhãn bên trái */
+.stepLabel {
+  position: absolute;
+  left: 0;
+  top: 45%;
+  transform: translate(-130%, -50%);
+  font-size: 17px;
+  font-weight: 500;
+  color: #2f2f2f;
+  white-space: nowrap;
+}
+
+/* Hình dạng */
 .shape {
-  width: 20px;
-  height: 20px;
+  position: absolute;
+  left: 0;
+  width: 30px;
+  height: 30px;
 }
 
 .greenCircle {
-  background-color: #58c46d;
-  border-radius: 50%;
-}
-
-.orangeCircle {
-  background-color: #f6a66b;
-  border-radius: 50%;
+  background-color: #27dd45;
+  border-radius: 60%;
 }
 
 .yellowDiamond {
-  background-color: #f9d85e;
+  background-color: #ffe75c;
   transform: rotate(45deg);
 }
 
+.greenwCircle {
+  background-color: #05ff2f;
+  transform: rotate(45deg);
+}
+
+.orangeSquare {
+  background-color: #ff7b4a;
+  transform: rotate(45deg);
+}
+
+.lineSquare {
+  position: absolute;
+  bottom: 0;
+  left: 1%;
+  width: 26px;
+  height: 26px;
+  background-color: #ff7b4a;
+  z-index: 1;
+}
+
+/* Text bên phải hình */
+.stepText {
+  margin-left: 18px;
+  max-width: 230px;
+}
+
 .stepTitle {
-  font-weight: 500;
-  color: #333;
+  font-size: 15px;
+  font-weight: 400;
+  color: #1c1c1c;
+  margin-bottom: 3px;
 }
 
 .stepDesc {
-  font-size: 14px;
-  color: #666;
+  font-size: 15px;
+  color: #444;
+  line-height: 1.5;
 }
 
+/* Footer */
 .footerText {
-  margin-top: 30px;
   font-size: 14px;
+  color: #333;
+  text-align: left;
+  margin-left: 70px;
+  max-width: 230px;
+  margin-bottom: 0;
+  padding-bottom: 20px;
+}
+
+/* Phần bình luận */
+.section {
+  text-align: center;
+  font-family: "Inter", sans-serif;
+  background: linear-gradient(
+    180deg,
+    #f3ffd9 0%,
+    var(--color-bg, #f0f9ff) 100%
+  );
+  padding: 80px 20px;
+  margin: 0;
+  box-sizing: border-box;
+  height: 100vh; /* ✅ Thay vì min-height */
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+/* Tiêu đề chính */
+.title {
+  font-size: 2rem;
+  color: #222;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+/* Mô tả phụ */
+.subtitle {
+  max-width: 600px;
+  margin: 0 auto 28px;
+  color: #666;
+  font-style: italic;
+  line-height: 1.6;
+}
+
+/* Nút CTA */
+.button {
+  background: white;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 28px;
+  color: #3b49df;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(59, 73, 223, 0.15);
+  transition: all 0.3s ease;
+}
+
+.button:hover {
+  background: #0055ff;
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+/* Lưới hiển thị các bình luận */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  max-width: 1000px;
+  margin: 60px auto 0;
+  box-sizing: border-box;
+}
+
+/* Trạng thái trống */
+.empty {
+  text-align: center;
+  color: #777;
+  margin-top: 40px;
+}
+
+/* ✅ Responsive */
+@media (max-width: 768px) {
+  .section {
+    padding: 60px 16px;
+  }
+
+  .title {
+    font-size: 1.6rem;
+  }
+
+  .subtitle {
+    font-size: 0.95rem;
+  }
+
+  .button {
+    padding: 8px 20px;
+    font-size: 0.95rem;
+  }
+
+  .cards {
+    margin-top: 40px;
+  }
+}
+
+/* phần cuối */
+.wrapper {
+  background: linear-gradient(180deg, var(--color-bg) 0%, #abc2ff 100%);
+  text-align: center;
+  padding: 80px 20px; /* Giảm bớt để không vượt khung */
+  font-family: "Inter", sans-serif;
+  height: 100vh; /* ✅ thay vì min-height */
+  display: flex;
+  flex-direction: column; /* đảm bảo bố cục dọc */
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box; /* ✅ tránh tính padding thừa */
+  overflow: hidden; /* ✅ chặn tràn nhỏ */
+}
+
+/* Container bên trong */
+.inner {
+  max-width: 800px;
+  margin: 0 auto;
+  margin-top: 0px;
+}
+
+/* Tiêu đề chính */
+.heading {
+  font-size: 2rem;
+  color: #222;
+  font-weight: 700;
+  line-height: 1.4;
+  margin-bottom: 16px;
+  margin-top: 10px;
+}
+
+/* Đoạn mô tả */
+.description {
+  color: #555;
+  max-width: 600px;
+  margin: 0 auto 32px;
+  font-style: italic;
+  line-height: 1.6;
+}
+
+/* Trích dẫn cuối */
+.quote {
   color: #444;
   font-style: italic;
+  margin-top: 60px;
+  line-height: 1.6;
+  font-size: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .heading {
+    font-size: 1.6rem;
+  }
+  .description {
+    font-size: 0.95rem;
+  }
+  .quote {
+    font-size: 0.9rem;
+  }
 }

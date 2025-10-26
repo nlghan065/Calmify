@@ -6,7 +6,9 @@
  */
 
 export const homeSections = [
-  { id: 'intro', tooltip: 'Giới thiệu' },
-  { id: 'features', tooltip: 'Tính năng' },
-  { id: 'testimonials', tooltip: 'Cảm nhận' }
-]
+  { id: "intro", tooltip: "Giới thiệu" },
+  { id: "features", tooltip: "Tính năng" },
+  { id: "calmifysteps", tooltip: "Từng bước" },
+  { id: "testimonials", tooltip: "Cảm nhận" },
+  { id: "final", tooltip: "Kết thúc" },
+];

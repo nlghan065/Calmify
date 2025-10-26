@@ -1,26 +1,35 @@
-/**
- * TestimonialsSection
- * -------------------
- * Mô tả: hiển thị cảm nhận của người dùng về Calmify.
- * Ghi chú: dữ liệu hiện là mock, sẽ thay bằng API sau này.
- */
-
 import React from "react";
-import Section from "@/components/Section/Section";
 import TestimonialCard from "@/components/TestimonialCard/TestimonialCard";
+import styles from "./Style.module.css";
+
+import imgABC from "@/assets/images/ABC.jpg";
+import imgFanzy from "@/assets/images/Fanzy.jpg";
+import imgRebel from "@/assets/images/Rebel.jpg";
 
 const mockTestimonials = [
   {
-    quote: "Calmify giúp tôi hiểu bản thân hơn mỗi ngày.",
-    author: "Minh, 27 tuổi",
+    img: imgABC,
+    quote:
+      "Tôi chưa từng nghĩ mình cần một ứng dụng như Calmify. Chỉ sau bài test ngắn, tôi nhận ra mình đang mệt mỏi hơn mình tưởng.",
+    author: "ABC",
+    age: "21 tuổi, Sinh viên Kinh tế",
+    rating: 5,
   },
   {
-    quote: "Ứng dụng này thật sự khiến tôi cảm thấy được lắng nghe.",
-    author: "Linh, 21 tuổi",
+    img: imgFanzy,
+    quote:
+      "AI không hề phán xét. Tôi chỉ nói ra điều mình nghĩ, và lần đầu tiên, tôi thấy mình được lắng nghe.",
+    author: "Fanzy",
+    age: "23 tuổi, kỹ sư phần mềm",
+    rating: 4,
   },
   {
-    quote: "Một không gian an toàn và nhẹ nhàng cho tâm trí.",
-    author: "Khánh, 30 tuổi",
+    img: imgRebel,
+    quote:
+      "Không phải app nào cũng khiến tôi muốn mở mỗi sáng. Calmify khiến tôi thấy mình không đơn độc.",
+    author: "Rebel",
+    age: "19 tuổi, Sinh viên Y",
+    rating: 5,
   },
 ];
 
@@ -29,21 +38,29 @@ export default function TestimonialsSection({
   showTitle = true,
 }) {
   if (!testimonials || testimonials.length === 0) {
-    return (
-      <p className="text-center text-gray-500">
-        Chưa có phản hồi từ người dùng
-      </p>
-    );
+    return <p className={styles.empty}>Chưa có phản hồi từ người dùng</p>;
   }
 
   return (
-    <Section
-      title={showTitle ? "Người dùng nói gì về Calmify" : ""}
-      bgColor="#f5f7fa"
-    >
-      {testimonials.map((item, i) => (
-        <TestimonialCard key={i} quote={item.quote} author={item.author} />
-      ))}
-    </Section>
+    <section className={styles.section}>
+      {showTitle && (
+        <>
+          <h2 className={styles.title}>
+            Mỗi lời chia sẻ là một hành trình bình yên hơn.
+          </h2>
+          <p className={styles.subtitle}>
+            “Calmify đã giúp sinh viên nhận ra rằng: đôi khi, chỉ cần được lắng
+            nghe và hiểu đúng, mọi thứ đã bắt đầu thay đổi.”
+          </p>
+          <button className={styles.button}>Trải nghiệm Calmify</button>
+        </>
+      )}
+
+      <div className={styles.cards}>
+        {testimonials.map((item, i) => (
+          <TestimonialCard key={i} {...item} />
+        ))}
+      </div>
+    </section>
   );
 }

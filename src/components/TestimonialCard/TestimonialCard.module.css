@@ -1,25 +1,55 @@
 .card {
-  background-color: #fffefe;
-  border-radius: 16px;
-  padding: 24px;
-  width: 260px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease;
+  background: #fff;
+  border-radius: 20px;
+  padding: 32px 24px;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.heroSection {
-  height: 100vh;
-  width: 100%;
-  background-color: #c0c0c0;
-  display: flex;
-  flex-direction: column;
-  font-family: 'Inter', sans-serif;
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
 }
 
-.content {
+.avatar {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 9px;
+}
+
+.name {
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #222;
+}
+
+.age {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 16px;
+}
+
+.quote {
+  font-style: italic;
+  color: #444;
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+.stars {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 100vh;
-  padding: 0 10%;
+  justify-content: center;
+  gap: 4px;
+}
+
+.star {
+  font-size: 18px;
+  color: #ccc;
+}
+
+.star.filled {
+  color: #facc15; /* vàng */
 }
