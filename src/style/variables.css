@@ -1,7 +1,7 @@
 :root {
   /* Colors */
-  --color-primary: #1b4965;
-  --color-primary-dark: #0a2f42;
+  --color-primary: #6ebae8;
+  --color-primary-dark: #069eeb;
   --color-accent: #0077b6;
   --color-bg: #f0f9ff;
   --color-bg-light: #f8fbfc;
@@ -13,7 +13,7 @@
   --container-padding: 5%;
 
   /* Font */
-  --font-family: 'Inter', sans-serif;
+  --font-family: "Inter", sans-serif;
 
   /* Shadow */
   --shadow-light: 0 1px 10px rgba(0, 0, 0, 0.05);

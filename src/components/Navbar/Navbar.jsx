@@ -1,8 +1,15 @@
-import React from 'react'
-import styles from './Navbar.module.css'
-import Button from '../Button/Button'
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import styles from "./Navbar.module.css";
+import Button from "../Button/Button";
 
 export default function Navbar() {
+  const navigate = useNavigate();
+
+  const handleLoginClick = () => {
+    navigate("/login");
+  };
+
   return (
     <nav className={styles.navbar}>
       <div className={styles.logo}>Calmify</div>
@@ -13,7 +20,7 @@ export default function Navbar() {
         <li>Bảo mật</li>
         <li>Góc cảm xúc</li>
       </ul>
-      <Button label="Trải nghiệm Calmify" />
+      <Button label="Đăng nhập" onClick={handleLoginClick} />{" "}
     </nav>
-  )
+  );
 }

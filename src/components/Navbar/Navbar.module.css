@@ -8,13 +8,18 @@
   justify-content: space-between;
   align-items: center;
   padding: 24px 64px;
-  background-color: rgba(255, 255, 255, 0.9); /* 👈 thêm nền trong suốt nhẹ để dễ đọc */
+  background-color: rgba(
+    255,
+    255,
+    255,
+    0.9
+  ); /* 👈 thêm nền trong suốt nhẹ để dễ đọc */
   backdrop-filter: blur(10px); /* 👌 tạo hiệu ứng mờ đẹp */
   transition: background-color 0.3s ease;
 }
 
 .logo {
-  font-size: 1.5rem;
+  font-size: 2rem;
   font-weight: 600;
   color: #1c1c1e;
 }

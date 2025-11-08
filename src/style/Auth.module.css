@@ -1,0 +1,196 @@
+@import url("https://fonts.googleapis.com/css2?family=Pacifico&display=swap");
+
+.container {
+  display: flex;
+  background-color: var(--color-bg);
+  font-family: var(--font-family);
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+/* ------- Cột trái (form) ------- */
+.left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 40px 100px;
+  position: relative;
+}
+
+.backBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  color: #555;
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: color 0.2s ease;
+}
+
+.backBtn:hover {
+  color: #000;
+}
+/* ------- Form chính ------- */
+.formBox {
+  max-width: 380px;
+  width: 100%;
+  margin: 0px 70px;
+}
+
+.title {
+  font-size: 36px;
+
+  color: var(--color-primary);
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  color: var(--color-text);
+  opacity: 0.7;
+  margin-bottom: 32px;
+  font-size: 15px;
+}
+
+/* ------- Input / Button ------- */
+.ant-input,
+.ant-select-selector {
+  border-radius: 8px !important;
+  padding: 10px !important;
+  border: 1px solid #d9d9d9 !important;
+  box-shadow: none !important;
+  transition: all 0.3s ease !important;
+}
+
+.ant-input:focus,
+.ant-select-focused .ant-select-selector {
+  border-color: var(--color-accent) !important;
+  box-shadow: 0 0 0 3px rgba(0, 119, 182, 0.15) !important;
+}
+
+/* Nút chính */
+.loginBtn {
+  background-color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+  color: var(--color-white) !important;
+  font-weight: 600 !important;
+  height: auto !important;
+  padding: 12px 16px !important;
+  border-radius: 10px !important;
+  transition: 0.3s ease !important;
+  font-size: 16px !important;
+  letter-spacing: 0.3px;
+}
+
+.loginBtn:hover,
+.loginBtn:focus {
+  background-color: var(--color-primary-dark) !important;
+  border-color: var(--color-primary-dark) !important;
+  color: var(--color-white) !important;
+  box-shadow: 0 4px 10px rgba(27, 73, 101, 0.25) !important;
+}
+
+.loginBtn:active {
+  background-color: var(--color-accent) !important;
+  border-color: var(--color-accent) !important;
+}
+
+/* ------- Quên mật khẩu / Đăng ký ------- */
+.actions {
+  text-align: right;
+  margin-bottom: 20px;
+}
+
+.forgot {
+  color: #069eeb !important;
+  font-size: 14px;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.forgot:hover {
+  text-decoration: underline;
+}
+
+.signupText {
+  margin-top: 24px;
+  font-size: 14px;
+  text-align: center;
+  color: var(--color-text);
+  opacity: 0.8;
+}
+
+.signupLink {
+  color: #069eeb !important;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.signupLink:hover {
+  text-decoration: underline;
+}
+
+/* ------- Cột phải (hình ảnh) ------- */
+.right {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.formWrapper {
+  background-color: rgba(255, 255, 255, 0.9); /* trắng hơi mờ để dịu nền */
+  border-radius: 20px; /* bo mềm mại hơn */
+  padding: 20px 48px; /* khoảng cách đều */
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.08); /* đổ bóng nhẹ */
+  backdrop-filter: blur(6px); /* hiệu ứng mờ nền nhẹ (glass) */
+  transition: all 0.3s ease;
+}
+
+.formWrapper:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.login {
+  width: 600px;
+  height: auto;
+  margin-left: -50px;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.08));
+  transition: transform 0.3s ease;
+}
+
+.login:hover {
+  transform: scale(1.02);
+}
+
+/* ------- Responsive (mobile) ------- */
+@media (max-width: 900px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .left {
+    padding: 40px 40px;
+  }
+
+  .right {
+    display: none; /* Ẩn hình để form dễ nhìn hơn */
+  }
+
+  .formBox {
+    max-width: 100%;
+    margin: 0;
+  }
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+}
