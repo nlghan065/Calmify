@@ -36,7 +36,7 @@
 }
 
 .navLinks li {
-  font-size: 0.9rem; /* 👈 chữ to hơn */
+  font-size: 1rem; /* 👈 chữ to hơn */
   font-weight: 50; /* 👈 đậm hơn một chút */
   color: #222;
   cursor: pointer;

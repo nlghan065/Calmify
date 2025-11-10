@@ -6,11 +6,7 @@ import RegisterPage from "./pages/auth/RegisterPage";
 import ForgotPage from "./pages/auth/ForgotPage";
 import ResetPassword from "./pages/auth/ResetPassword";
 import OTPPage from "./pages/auth/OTPPage";
-import HomeIntro from "./features/loading/HomeIntro";
-import HighlightFeatures from "./features/loading/HighlightFeatures";
-import CalmifySteps from "./features/loading/CalmifySteps";
-import TestimonialsSection from "./features/loading/TestimonialsSection";
-import FinalSection from "./features/loading/FinalSection";
+import Test from "./pages/Test";
 
 function App() {
   return (
@@ -22,11 +18,7 @@ function App() {
         <Route path="/forgot" element={<ForgotPage />} />
         <Route path="/verify-otp" element={<OTPPage />} />
         <Route path="/reset" element={<ResetPassword />} />
-        <Route path="/about" element={<HomeIntro />} />
-        <Route path="/features" element={<HighlightFeatures />} />
-        <Route path="/journey" element={<CalmifySteps />} />
-        <Route path="/feedback" element={<TestimonialsSection />} />
-        <Route path="/start" element={<FinalSection />} />
+        <Route path="/test" element={<Test />} />
       </Routes>
     </BrowserRouter>
   );
