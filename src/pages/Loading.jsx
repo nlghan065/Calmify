@@ -1,15 +1,4 @@
-/**
- * HomePage.jsx
- * -------------
- * Mô tả: trang chính của Calmify, kết hợp các section (Intro, Features, Testimonials)
- * và quản lý hành vi scroll toàn trang bằng fullpage.js.
- *
- * Ghi chú:
- * - Cần đảm bảo phần tử #fullpage tồn tại trong DOM.
- * - Thứ tự section phải trùng với cấu hình trong home.config.js.
- */
-
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import useFullpage from "@/hooks/useFullpage";
 import { homeSections } from "@/features/loading/Home.config";
 
@@ -19,46 +8,52 @@ import TestimonialsSection from "@/features/loading/TestimonialsSection";
 import CalmifySteps from "@/features/loading/CalmifySteps";
 import FinalSection from "@/features/loading/FinalSection";
 
+import { FullpageContext } from "@/context/FullpageContext";
+
 export default function Loading() {
-  // Khởi tạo fullpage.js khi trang load
+  const [fullpageAPI, setFullpageAPI] = useState(null);
+
   const fullpageRef = useFullpage({
     anchors: homeSections.map((s) => s.id),
     navigationTooltips: homeSections.map((s) => s.tooltip),
     scrollingSpeed: 700,
+    afterRender: () => {
+      console.log("✅ Fullpage.js khởi tạo xong!");
+      // Lưu instance vào state để truyền cho Navbar
+      setFullpageAPI(window.fullpage_api);
+    },
   });
 
-  // Kiểm tra sau khi khởi tạo (debug hoặc để hiển thị log)
   useEffect(() => {
     if (!fullpageRef.current) {
-      console.warn(" Fullpage chưa được khởi tạo đúng cách.");
+      console.warn("⚠️ Fullpage chưa được khởi tạo đúng cách.");
     }
   }, [fullpageRef]);
 
   return (
-    <div id="fullpage">
-      {/* Section: Giới thiệu */}
-      <div className="section" data-anchor="intro">
-        <HomeIntro />
-      </div>
+    // 👇 Chỉ truyền context khi fullpageAPI sẵn sàng
+    <FullpageContext.Provider value={fullpageAPI}>
+      <div id="fullpage">
+        <div className="section" data-anchor="intro">
+          <HomeIntro />
+        </div>
 
-      {/* Section: Tính năng */}
-      <div className="section" data-anchor="features">
-        <HighlightFeatures />
-      </div>
+        <div className="section" data-anchor="features">
+          <HighlightFeatures />
+        </div>
 
-      {/* Section: Từng bước */}
-      <div className="section" data-anchor="calmifysteps">
-        <CalmifySteps />
-      </div>
+        <div className="section" data-anchor="calmifysteps">
+          <CalmifySteps />
+        </div>
 
-      {/* Section: Cảm nhận */}
-      <div className="section" data-anchor="testimonials">
-        <TestimonialsSection />
+        <div className="section" data-anchor="testimonials">
+          <TestimonialsSection />
+        </div>
+
+        <div className="section" data-anchor="final">
+          <FinalSection />
+        </div>
       </div>
-      {/* Section: final */}
-      <div className="section" data-anchor="final">
-        <FinalSection />
-      </div>
-    </div>
+    </FullpageContext.Provider>
   );
 }

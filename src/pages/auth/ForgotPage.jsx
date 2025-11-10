@@ -1,6 +1,7 @@
 import React from "react";
 import { Form, Input, Button, Typography, message } from "antd";
 import { MailOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 import styles from "../../style/Auth.module.css";
 import AuthLayout from "../../components/Auth/AuthLayout";
 import { authAPI } from "@/api/auth/authAPI";
@@ -9,11 +10,15 @@ const { Title, Paragraph } = Typography;
 const AntdLink = Typography.Link;
 
 const ForgotPage = () => {
+  const navigate = useNavigate();
+
   const onFinish = async (values) => {
     try {
       const res = await authAPI.forgotPassword(values);
-      message.success(res.data.message || "Hãy kiểm tra email của bạn 💌");
-      console.log("Yêu cầu đặt lại mật khẩu:", res.data);
+      message.success(res.data.message || "Mã OTP đã được gửi qua email 💌");
+
+      // ✅ Chuyển hướng sang trang nhập OTP, truyền kèm email
+      navigate(`/verify-otp?email=${values.email}`);
     } catch (err) {
       message.error(err.response?.data?.message || "Không thể gửi yêu cầu!");
     }
@@ -30,7 +35,7 @@ const ForgotPage = () => {
           Quên mật khẩu
         </Title>
         <Paragraph className={styles.subtitle}>
-          Đừng lo lắng, chúng tôi sẽ giúp bạn lấy lại mật khẩu 🌱
+          Đừng lo, chúng tôi sẽ gửi mã OTP đến email của bạn 🌱
         </Paragraph>
 
         <Form
@@ -64,7 +69,7 @@ const ForgotPage = () => {
               size="large"
               className={styles.loginBtn}
             >
-              Gửi yêu cầu
+              Gửi mã OTP
             </Button>
           </Form.Item>
         </Form>

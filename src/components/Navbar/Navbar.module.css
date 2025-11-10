@@ -1,27 +1,32 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&display=swap");
+
 .navbar {
-  position: fixed; /* 👈 giữ cố định */
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  z-index: 9999; /* 👈 đảm bảo nằm trên mọi section */
+  z-index: 9999;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 24px 64px;
-  background-color: rgba(
-    255,
-    255,
-    255,
-    0.9
-  ); /* 👈 thêm nền trong suốt nhẹ để dễ đọc */
-  backdrop-filter: blur(10px); /* 👌 tạo hiệu ứng mờ đẹp */
+  padding: 0px 60px;
+  background-color: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
   transition: background-color 0.3s ease;
+  font-family: "Poppins", sans-serif; /* 👈 Áp dụng font mới */
 }
 
 .logo {
-  font-size: 2rem;
-  font-weight: 600;
-  color: #1c1c1e;
+  height: 80px;
+  width: auto;
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.logo:hover {
+  transform: scale(1.05);
 }
 
 .navLinks {
@@ -31,12 +36,19 @@
 }
 
 .navLinks li {
-  font-size: 1rem;
-  color: #333;
+  font-size: 0.9rem; /* 👈 chữ to hơn */
+  font-weight: 50; /* 👈 đậm hơn một chút */
+  color: #222;
   cursor: pointer;
-  transition: color 0.2s ease;
+  transition: color 0.2s ease, transform 0.2s ease;
 }
 
 .navLinks li:hover {
   color: #0055ff;
+  transform: translateY(-2px); /* 👌 hiệu ứng nhẹ khi hover */
+}
+.navButtons {
+  display: flex;
+  gap: 12px; /* 👈 khoảng cách giữa 2 nút */
+  align-items: center;
 }

@@ -5,4 +5,6 @@ export const authAPI = {
   login: (data) => axios.post(`${API_URL}/login`, data),
   register: (data) => axios.post(`${API_URL}/register`, data),
   forgotPassword: (data) => axios.post(`${API_URL}/forgot-password`, data),
+  verifyOTP: (data) => axios.post(`${API_URL}/verify-otp`, data),
+  resetPassword: (data) => axios.post(`${API_URL}/reset-password`, data),
 };

@@ -3,24 +3,45 @@
   color: white;
   border: none;
   border-radius: 999px;
-  padding: 10px 22px;
+  padding: 11px 25px; /* 👈 to hơn: tăng cả chiều cao & chiều ngang */
+  font-size: 0.9rem; /* 👈 chữ lớn hơn */
+  font-weight: 500; /* 👈 chữ đậm hơn, nhìn “cân” hơn */
   cursor: pointer;
-  font-weight: 300;
   transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 85, 255, 0.25); /* 👌 hiệu ứng nổi nhẹ */
 }
 
 .primary:hover {
   background-color: #003fd1;
+  transform: translateY(-2px); /* 👌 hiệu ứng nhấn nhẹ khi hover */
+}
+.light {
+  background-color: #66b3ff; /* 👈 xanh nhạt */
+  color: white;
+  border: none;
+  border-radius: 999px;
+  padding: 11px 30px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(102, 179, 255, 0.25);
+}
+
+.light:hover {
+  background-color: #3399ff;
+  transform: translateY(-2px);
 }
 
 .outline {
   margin-top: 10px;
-  padding: 12px 28px;
+  padding: 14px 32px; /* 👈 khớp với .primary */
   border-radius: 999px;
-  border: 1px solid #0055ff;
+  border: 1.5px solid #0055ff;
   background-color: transparent;
   color: #0055ff;
-  font-weight: 100;
+  font-size: 1.05rem;
+  font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
 }
@@ -28,4 +49,5 @@
 .outline:hover {
   background-color: #0055ff;
   color: white;
+  transform: translateY(-2px);
 }

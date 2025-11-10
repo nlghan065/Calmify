@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Form,
   Input,
@@ -9,7 +9,11 @@ import {
   Col,
   message,
 } from "antd";
-import { LockOutlined, MailOutlined } from "@ant-design/icons";
+import {
+  LockOutlined,
+  MailOutlined,
+  CheckCircleTwoTone,
+} from "@ant-design/icons";
 import styles from "../../style/Auth.module.css";
 import AuthLayout from "../../components/Auth/AuthLayout";
 import { authAPI } from "@/api/auth/authAPI";
@@ -31,6 +35,13 @@ const jobOptions = getAntdOptions([
 
 const RegisterPage = () => {
   const [form] = Form.useForm();
+  const [passwordChecks, setPasswordChecks] = useState({
+    length: false,
+    upper: false,
+    lower: false,
+    number: false,
+    special: false,
+  });
 
   const onFinish = async (values) => {
     try {
@@ -38,6 +49,13 @@ const RegisterPage = () => {
       message.success(res.data.message || "Đăng ký thành công! 🌿");
       console.log("Dữ liệu đăng ký:", res.data);
       form.resetFields();
+      setPasswordChecks({
+        length: false,
+        upper: false,
+        lower: false,
+        number: false,
+        special: false,
+      });
     } catch (err) {
       message.error(err.response?.data?.message || "Đăng ký thất bại!");
     }
@@ -45,6 +63,18 @@ const RegisterPage = () => {
 
   const onFinishFailed = () => {
     message.error("Vui lòng kiểm tra lại thông tin nhé!");
+  };
+
+  // ✅ Cập nhật trạng thái các điều kiện khi người dùng nhập mật khẩu
+  const handlePasswordChange = (e) => {
+    const value = e.target.value;
+    setPasswordChecks({
+      length: value.length >= 8,
+      upper: /[A-Z]/.test(value),
+      lower: /[a-z]/.test(value),
+      number: /\d/.test(value),
+      special: /[\W_]/.test(value),
+    });
   };
 
   const JobSpecificFields = () => {
@@ -104,6 +134,25 @@ const RegisterPage = () => {
       </Row>
     );
   };
+
+  const renderCheckItem = (label, passed) => (
+    <li
+      style={{
+        listStyle: "none",
+        display: "flex",
+        alignItems: "center",
+        gap: "6px",
+        color: passed ? "#52c41a" : "#999",
+        fontSize: "13px",
+      }}
+    >
+      <CheckCircleTwoTone
+        twoToneColor={passed ? "#52c41a" : "#d9d9d9"}
+        style={{ fontSize: "14px" }}
+      />
+      {label}
+    </li>
+  );
 
   return (
     <AuthLayout>
@@ -169,16 +218,77 @@ const RegisterPage = () => {
             />
           </Form.Item>
 
+          {/* ✅ Mật khẩu có checklist */}
           <Form.Item
             label="Mật khẩu"
             name="password"
-            rules={[{ required: true, message: "Bạn quên nhập mật khẩu rồi." }]}
+            rules={[
+              { required: true, message: "Bạn quên nhập mật khẩu rồi." },
+              {
+                validator: (_, value) => {
+                  // Nếu chưa nhập, không cần kiểm tra thêm — đã có rule required xử lý
+                  if (!value) return Promise.resolve();
+
+                  const checks = [
+                    /.{8,}/.test(value),
+                    /[A-Z]/.test(value),
+                    /[a-z]/.test(value),
+                    /\d/.test(value),
+                    /[!@#$%^&*]/.test(value),
+                  ];
+
+                  if (checks.every(Boolean)) return Promise.resolve();
+                  return Promise.reject("Mật khẩu chưa đủ điều kiện.");
+                },
+              },
+            ]}
           >
-            <Input.Password
-              prefix={<LockOutlined />}
-              placeholder="Nhập mật khẩu"
-              size="large"
-            />
+            <>
+              <Input.Password
+                prefix={<LockOutlined />}
+                placeholder="Nhập mật khẩu"
+                size="large"
+                onChange={(e) => {
+                  const value = e.target.value;
+                  form.setFieldValue("password", value);
+                  setPasswordChecks({
+                    length: value.length >= 8,
+                    upper: /[A-Z]/.test(value),
+                    lower: /[a-z]/.test(value),
+                    number: /\d/.test(value),
+                    special: /[\W_]/.test(value),
+                  });
+                }}
+              />
+
+              <Row gutter={[16, 4]} style={{ marginTop: "8px" }}>
+                <Col xs={24} sm={12}>
+                  <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+                    {renderCheckItem("Ít nhất 8 ký tự", passwordChecks.length)}
+                    {renderCheckItem(
+                      "Chứa chữ hoa (A–Z)",
+                      passwordChecks.upper
+                    )}
+                    {renderCheckItem(
+                      "Chứa chữ thường (a–z)",
+                      passwordChecks.lower
+                    )}
+                  </ul>
+                </Col>
+                <Col xs={24} sm={12}>
+                  <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+                    {renderCheckItem(
+                      "Có ít nhất 1 số (0–9)",
+                      passwordChecks.number
+                    )}
+                    {renderCheckItem(
+                      "Có ký tự đặc biệt (!@#$...)",
+                      passwordChecks.special
+                    )}
+                  </ul>
+                </Col>
+              </Row>
+            </>
           </Form.Item>
 
           <Form.Item>
