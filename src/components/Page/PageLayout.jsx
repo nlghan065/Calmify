@@ -21,8 +21,8 @@ const PageLayout = ({ children }) => {
       {/* Footer */}
       <Footer className={styles.footer}>
         <p>
-          Your privacy is important to us. All responses are confidential and
-          stored securely.
+          Quyền riêng tư của bạn rất quan trọng đối với chúng tôi. Mọi phản hồi
+          đều được bảo mật và lưu trữ an toàn.
         </p>
       </Footer>
     </Layout>

@@ -5,6 +5,7 @@ import styles from "./Style.module.css";
 import imgABC from "@/assets/images/ABC.jpg";
 import imgFanzy from "@/assets/images/Fanzy.jpg";
 import imgRebel from "@/assets/images/Rebel.jpg";
+import { useNavigate } from "react-router-dom";
 
 const mockTestimonials = [
   {
@@ -37,6 +38,7 @@ export default function TestimonialsSection({
   testimonials = mockTestimonials,
   showTitle = true,
 }) {
+  const navigate = useNavigate();
   if (!testimonials || testimonials.length === 0) {
     return <p className={styles.empty}>Chưa có phản hồi từ người dùng</p>;
   }
@@ -52,7 +54,12 @@ export default function TestimonialsSection({
             “Calmify đã giúp sinh viên nhận ra rằng: đôi khi, chỉ cần được lắng
             nghe và hiểu đúng, mọi thứ đã bắt đầu thay đổi.”
           </p>
-          <button className={styles.button}>Trải nghiệm Calmify</button>
+          <button
+            className={styles.button}
+            onClick={() => navigate("/test-info")}
+          >
+            Trải nghiệm Calmify
+          </button>
         </>
       )}
 

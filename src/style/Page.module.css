@@ -7,17 +7,21 @@
 .header {
   background: #ffffff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  padding: 0;
+  padding: 5px 60px;
   position: sticky;
   top: 0;
   z-index: 10;
+}
+:global(.ant-layout-header) {
+  height: 50px !important;
+  line-height: 30px !important;
 }
 
 .contentWrapper {
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding: 40px 16px;
+  padding: 40px 10px;
   min-height: calc(100vh - 160px);
 }
 
@@ -27,7 +31,7 @@
   border-radius: 16px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
   width: 100%;
-  max-width: 700px;
+  max-width: 800px;
 }
 
 .footer {
@@ -35,5 +39,129 @@
   color: #999;
   font-size: 13px;
   background: transparent;
-  padding: 16px;
+  margin-top: -49px;
+  padding: 1px;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 8px !important;
+  margin-top: -5px;
+}
+
+.subtitle {
+  text-align: left; /* đọc dễ hơn căn giữa */
+  color: #444; /* độ tương phản tốt hơn */
+  font-size: 16px; /* chữ to hơn chút */
+  line-height: 1.7; /* giãn dòng để dễ đọc */
+  max-width: 520px; /* hạn chế chiều rộng */
+  margin: 0 auto 32px auto; /* vẫn căn giữa khối văn bản */
+}
+
+/* --- Thanh tiến trình --- */
+.progressWrapper {
+  margin-bottom: 32px;
+}
+
+.progressHeader {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 2px;
+}
+
+.progressBar {
+  height: 8px;
+  background: #f0f0f0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  width: 11%;
+  background: linear-gradient(to right, hwb(218 66% 0%), #2b6ee1);
+  border-radius: 8px;
+  transition: width 0.3s ease;
+}
+
+.progressFill2 {
+  height: 100%;
+  width: 22%;
+  background: linear-gradient(to right, hwb(218 66% 0%), #2b6ee1);
+  border-radius: 8px;
+  transition: width 0.3s ease;
+}
+
+/* --- Câu hỏi và lựa chọn --- */
+.questionText {
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 15px;
+  margin-top: -10px;
+  color: #444;
+}
+
+.radioGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.radioGroup label {
+  padding: 10px 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+}
+
+.radioGroup label:hover {
+  border-color: #627ffff4;
+  background-color: #f5f6ff;
+}
+
+/* --- Nút điều khiển --- */
+.buttonGroup {
+  display: flex;
+  justify-content: space-between;
+}
+
+.backButton {
+  border-radius: 10px;
+}
+
+.submitButton {
+  border: none;
+  border-radius: 10px;
+  background: #6e86ff;
+  color: rgb(255, 255, 255);
+  font-weight: 500;
+}
+
+.submitButton:hover {
+  opacity: 0.9;
+  background: #123afe !important;
+  color: rgb(255, 255, 255) !important;
+}
+
+.button {
+  display: block; /* chuyển button sang dạng block */
+  margin: 5px auto;
+  background: #0055ff;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 28px;
+  color: #f9f9f9;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(59, 73, 223, 0.15);
+  transition: all 0.3s ease;
+}
+
+.button:hover {
+  background: #0044cb;
+  color: #ffffff;
+  transform: translateY(-2px);
 }

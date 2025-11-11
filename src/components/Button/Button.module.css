@@ -3,7 +3,7 @@
   color: white;
   border: none;
   border-radius: 999px;
-  padding: 11px 25px; /* 👈 to hơn: tăng cả chiều cao & chiều ngang */
+  padding: 10px 25px; /* 👈 to hơn: tăng cả chiều cao & chiều ngang */
   font-size: 0.9rem; /* 👈 chữ lớn hơn */
   font-weight: 500; /* 👈 chữ đậm hơn, nhìn “cân” hơn */
   cursor: pointer;
@@ -20,7 +20,7 @@
   color: white;
   border: none;
   border-radius: 999px;
-  padding: 11px 30px;
+  padding: 10px 30px;
   font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;

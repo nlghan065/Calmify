@@ -1,8 +1,10 @@
 import React from "react";
 import Button from "@/components/Button/Button";
 import styles from "./Style.module.css";
+import { useNavigate } from "react-router-dom";
 
 export default function FinalSection() {
+  const navigate = useNavigate();
   return (
     <section className={styles.wrapper}>
       <div className={styles.inner}>
@@ -20,7 +22,7 @@ export default function FinalSection() {
         <Button
           label="Trải nghiệm Calmify"
           variant="primary"
-          onClick={() => console.log("Đi đến trải nghiệm Calmify")}
+          onClick={() => navigate("/test-info")}
         />
 
         <p className={styles.quote}>

@@ -6,7 +6,10 @@ import RegisterPage from "./pages/auth/RegisterPage";
 import ForgotPage from "./pages/auth/ForgotPage";
 import ResetPassword from "./pages/auth/ResetPassword";
 import OTPPage from "./pages/auth/OTPPage";
-import Test from "./pages/Test";
+import TestInfo from "./pages/test/TestInfo";
+import Test from "./pages/test/Test";
+import Test2 from "./pages/test/Test2";
+import Result from "./pages/test/Result";
 
 function App() {
   return (
@@ -18,7 +21,10 @@ function App() {
         <Route path="/forgot" element={<ForgotPage />} />
         <Route path="/verify-otp" element={<OTPPage />} />
         <Route path="/reset" element={<ResetPassword />} />
+        <Route path="/test-info" element={<TestInfo />} />
         <Route path="/test" element={<Test />} />
+        <Route path="/test2" element={<Test2 />} />
+        <Route path="/result" element={<Result />} />
       </Routes>
     </BrowserRouter>
   );
