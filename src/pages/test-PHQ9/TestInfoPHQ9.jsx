@@ -1,16 +1,18 @@
 import React, { useState } from "react";
 import { Radio, Button, Typography } from "antd";
-import LayoutContainer from "@/Layout/LayoutContainer";
-import styles from "@/style/Test.module.css";
+import PageLayout from "@/components/Page/PageLayout";
+import styles from "@/style/Page.module.css";
 import { useNavigate } from "react-router-dom";
 
 const { Title } = Typography;
 
-const TestInfo = () => {
+const TestInfoPHQ9 = () => {
   const navigate = useNavigate();
 
+  const [value, setValue] = useState(null);
+
   return (
-    <LayoutContainer>
+    <PageLayout>
       <div className={styles.testContainer}>
         {/* Tiêu đề */}
         <Title level={2} className={styles.title}>
@@ -24,12 +26,15 @@ const TestInfo = () => {
           thái tinh thần của mình. Kết quả giúp bạn nhận biết sớm dấu hiệu trầm
           cảm và theo dõi mức độ thay đổi cảm xúc theo thời gian.
         </p>
-        <button className={styles.button} onClick={() => navigate("/test1")}>
+        <button
+          className={styles.button}
+          onClick={() => navigate("/test-phq9")}
+        >
           Bắt đầu bài test
         </button>
       </div>
-    </LayoutContainer>
+    </PageLayout>
   );
 };
 
-export default TestInfo;
+export default TestInfoPHQ9;

@@ -16,7 +16,7 @@ export default function HeroText() {
       </p>
       <Button
         label="Trải nghiệm Calmify"
-        onClick={() => navigate("/test-info")}
+        onClick={() => navigate("/test-info-phq9")}
       />
     </div>
   );

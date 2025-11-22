@@ -1,18 +1,18 @@
 import React, { useState } from "react";
 import { Radio, Button, Typography } from "antd";
-import LayoutContainer from "@/Layout/LayoutContainer";
-import styles from "@/style/Test.module.css";
+import PageLayout from "@/components/Page/PageLayout";
+import styles from "@/style/Page.module.css";
 import { useNavigate } from "react-router-dom";
 
 const { Title } = Typography;
 
-const Result = () => {
+const ResultPHQ9 = () => {
   const navigate = useNavigate();
 
   const [value, setValue] = useState(null);
 
   return (
-    <LayoutContainer>
+    <PageLayout>
       <div className={styles.testContainer}>
         {/* Tiêu đề */}
         <Title level={2} className={styles.title}>
@@ -23,18 +23,12 @@ const Result = () => {
           được lắng nghe. Hãy đăng nhập để trò chuyện cùng AI lắng nghe – nơi
           bạn có thể tâm sự và nhận sự đồng hành an toàn, kín đáo. 🌱
         </p>
-        <button
-          className={styles.button}
-          onClick={() => navigate("/statistical")} //thống kê
-        >
-          Lưu lại kết quả
-        </button>
-        <button className={styles.button} onClick={() => navigate("/category")}>
-          Làm bài test mới
+        <button className={styles.button} onClick={() => navigate("/login")}>
+          Đăng nhập để trò chuyện cùng AI lắng nghe.
         </button>
       </div>
-    </LayoutContainer>
+    </PageLayout>
   );
 };
 
-export default Result;
+export default ResultPHQ9;

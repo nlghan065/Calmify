@@ -56,7 +56,7 @@ export default function TestimonialsSection({
           </p>
           <button
             className={styles.button}
-            onClick={() => navigate("/test-info")}
+            onClick={() => navigate("/test-info-phq9")}
           >
             Trải nghiệm Calmify
           </button>

@@ -2,7 +2,9 @@
 
 .layout {
   display: flex;
-  height: 100vh;
+  min-height: 100vh;
+  height: auto;
+
   background: var(--color-bg);
   font-family: "Inter", sans-serif;
 }
@@ -94,16 +96,19 @@
   display: flex;
   flex-direction: column;
   background: var(--color-bg);
-  min-height: 100vh;
+  height: 100vh; /* QUAN TRỌNG */
+  overflow: hidden; /* Ngăn tràn */
 }
 
 /* ==== Header ==== */
 .header {
-  background: #e5f5ff;
-  padding: 20px 20px;
+  background: linear-gradient(135deg, #dff0ff, #eaf6ff);
+  padding: 20px 25px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  border-bottom: 2px solid #caddf7;
 }
 
 .header h2 {
@@ -152,16 +157,23 @@
 /* ==== Content ==== */
 .content {
   padding: 30px 20px;
-  overflow-y: auto;
-
+  flex: 1; /* QUAN TRỌNG – giúp Content chiếm toàn bộ phần trống giữa header & footer */
+  overflow-y: auto; /* Nếu nội dung dài thì cuộn */
   background: var(--color-bg);
 }
 
 .footer {
   text-align: center;
-  margin: 20px 10px;
+  padding: 15px;
   font-size: 13px;
-  line-height: 1.4;
   color: #555;
+  background: transparent;
   margin-bottom: -50px;
+}
+
+.active {
+  background: #e6f0ff;
+  color: #1e63ff;
+  font-weight: 600;
+  border-radius: 10px;
 }

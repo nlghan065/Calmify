@@ -22,7 +22,7 @@ export default function FinalSection() {
         <Button
           label="Trải nghiệm Calmify"
           variant="primary"
-          onClick={() => navigate("/test-info")}
+          onClick={() => navigate("/test-info-phq9")}
         />
 
         <p className={styles.quote}>

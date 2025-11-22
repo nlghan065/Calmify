@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 const { Title } = Typography;
 
-const Test2 = () => {
+const Test1 = () => {
   const navigate = useNavigate();
   const [value, setValue] = useState(null);
 
@@ -25,17 +25,18 @@ const Test2 = () => {
         {/* Thanh tiến trình */}
         <div className={styles.progressWrapper}>
           <div className={styles.progressHeader}>
-            <span>Câu hỏi 2 trên 9</span>
-            <span>22%</span>
+            <span>Câu hỏi 1 trên 9</span>
+            <span>11%</span>
           </div>
           <div className={styles.progressBar}>
-            <div className={styles.progressFill2} />
+            <div className={styles.progressFill} />
           </div>
         </div>
 
         {/* Câu hỏi */}
         <p className={styles.questionText}>
-          Bạn có cảm thấy buồn bã, chán nản hoặc tuyệt vọng không?
+          Bạn có cảm thấy ít hứng thú hoặc không còn niềm vui khi làm những việc
+          thường ngày không?
         </p>
 
         {/* Radio */}
@@ -54,16 +55,16 @@ const Test2 = () => {
         <div className={styles.buttonGroup}>
           <Button
             className={styles.backButton}
-            onClick={() => navigate("/test1")}
+            onClick={() => navigate("/test-info")}
           >
             Quay lại
           </Button>
           <Button
             className={styles.submitButton}
-            onClick={() => navigate("/result")}
+            onClick={() => navigate("/test2")}
             disabled={value === null}
           >
-            Gửi câu trả lời
+            Câu tiếp theo
           </Button>
         </div>
       </div>
@@ -71,4 +72,4 @@ const Test2 = () => {
   );
 };
 
-export default Test2;
+export default Test1;

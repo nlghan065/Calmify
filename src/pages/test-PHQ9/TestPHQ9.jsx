@@ -55,13 +55,13 @@ const Test = () => {
         <div className={styles.buttonGroup}>
           <Button
             className={styles.backButton}
-            onClick={() => navigate("/test-info")}
+            onClick={() => navigate("/test-info-phq9")}
           >
             Quay lại
           </Button>
           <Button
             className={styles.submitButton}
-            onClick={() => navigate("/test2")}
+            onClick={() => navigate("/test2-phq9")}
             disabled={value === null}
           >
             Câu tiếp theo

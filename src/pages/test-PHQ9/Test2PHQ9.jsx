@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Radio, Button, Typography } from "antd";
-import LayoutContainer from "@/Layout/LayoutContainer";
-import styles from "@/style/Test.module.css";
+import PageLayout from "@/components/Page/PageLayout";
+import styles from "@/style/Page.module.css";
 import { useNavigate } from "react-router-dom";
 
 const { Title } = Typography;
@@ -11,7 +11,7 @@ const Test2 = () => {
   const [value, setValue] = useState(null);
 
   return (
-    <LayoutContainer>
+    <PageLayout>
       <div className={styles.testContainer}>
         {/* Tiêu đề */}
         <Title level={2} className={styles.title}>
@@ -54,20 +54,20 @@ const Test2 = () => {
         <div className={styles.buttonGroup}>
           <Button
             className={styles.backButton}
-            onClick={() => navigate("/test1")}
+            onClick={() => navigate("/test-phq9")}
           >
             Quay lại
           </Button>
           <Button
             className={styles.submitButton}
-            onClick={() => navigate("/result")}
+            onClick={() => navigate("/result-phq9")}
             disabled={value === null}
           >
             Gửi câu trả lời
           </Button>
         </div>
       </div>
-    </LayoutContainer>
+    </PageLayout>
   );
 };
 
