@@ -1,0 +1,63 @@
+.chatWrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 20px;
+  background: #fdfdfd;
+}
+
+.chatBox {
+  flex: 1;
+  padding: 15px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.userMessage {
+  align-self: flex-end;
+  background: #4f80ff;
+  color: white;
+  padding: 10px 14px;
+  border-radius: 12px 12px 0 12px;
+  max-width: 70%;
+}
+
+.botMessage {
+  align-self: flex-start;
+  background: #eaeaea;
+  padding: 10px 14px;
+  border-radius: 12px 12px 12px 0;
+  max-width: 70%;
+}
+
+.inputArea {
+  display: flex;
+  margin-top: 15px;
+  gap: 10px;
+}
+
+.inputArea input {
+  flex: 1;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  outline: none;
+}
+
+.inputArea button {
+  padding: 12px 20px;
+  background: #4f80ff;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.inputArea button:hover {
+  opacity: 0.9;
+}

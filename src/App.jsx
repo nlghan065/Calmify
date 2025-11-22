@@ -10,6 +10,8 @@ import TestInfo from "./pages/test/TestInfo";
 import Test from "./pages/test/Test";
 import Test2 from "./pages/test/Test2";
 import Result from "./pages/test/Result";
+import Home from "./pages/Home";
+import ChatAI from "./pages/ChatAI";
 
 function App() {
   return (
@@ -25,6 +27,8 @@ function App() {
         <Route path="/test" element={<Test />} />
         <Route path="/test2" element={<Test2 />} />
         <Route path="/result" element={<Result />} />
+        <Route path="/home" element={<Home />} />
+        <Route path="/chat" element={<ChatAI />} />
       </Routes>
     </BrowserRouter>
   );

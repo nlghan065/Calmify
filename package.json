@@ -10,9 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@lottiefiles/react-lottie-player": "^3.6.0",
     "antd": "^5.28.0",
     "axios": "^1.13.2",
     "fullpage.js": "^4.0.37",
+    "lottie-react": "^2.4.1",
     "lucide-react": "^0.548.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",

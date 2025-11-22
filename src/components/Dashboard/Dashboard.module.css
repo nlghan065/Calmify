@@ -1,0 +1,262 @@
+/* ===== Dashboard.module.css ===== */
+
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  background: var(--color-bg);
+  font-family: "Inter", sans-serif;
+  padding-bottom: 20px;
+  min-height: auto;
+}
+
+/* ===== Ô cảm xúc chính ===== */
+.emotionCard {
+  background: #ffffff;
+  padding: 32px;
+  border-radius: 18px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+}
+
+.emotionCard:hover {
+  transform: translateY(-2px);
+}
+
+.emotionCard h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #2a4d9e;
+  margin-top: -2px;
+}
+
+.emotionCard p {
+  font-size: 14px;
+  color: #666;
+}
+
+.emotionButtons {
+  display: flex;
+  justify-content: center;
+  gap: 50px;
+  margin: 20px 0;
+}
+.emotionBtn {
+  font-size: 40px; /* icon to */
+  background: transparent; /* bỏ nền */
+  border: 2px solid #d0d8f7; /* khung */
+  padding: 10px;
+  border-radius: 16px; /* bo tròn */
+  cursor: pointer;
+  width: 75px;
+  height: 75px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s ease;
+}
+
+.emotionBtn:hover {
+  border-color: #4f80ff;
+  transform: translateY(-3px);
+}
+
+.activeEmotion {
+  border: 3px solid #4f80ff; /* khung khi chọn */
+  background: #eef3ff; /* nhẹ thôi */
+  transform: scale(1.1);
+  box-shadow: 0 4px 10px rgba(79, 128, 255, 0.3);
+}
+
+textarea {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid #dce3f3;
+  padding: 8px 10px;
+  resize: none;
+  min-height: 50px; /* nhỏ hơn trước */
+  margin-top: 10px;
+  margin-bottom: 14px;
+  background: #fafbff;
+  font-family: inherit;
+  font-size: 14px;
+  color: #333;
+  transition: all 0.2s ease;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: #1e63ff;
+  background: #fff;
+  box-shadow: 0 0 0 2px rgba(30, 99, 255, 0.1);
+}
+
+/* ===== Nút gửi ===== */
+.submitBtn {
+  display: block;
+  margin: 0 auto;
+  background: #1e63ff;
+  color: #fff;
+  border: none;
+  padding: 10px 28px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  transition: 0.3s ease;
+}
+
+.submitBtn:hover {
+  background: #0048d0;
+  transform: translateY(-1px);
+}
+
+/* ===== Phần bên dưới (3 ô nhỏ) ===== */
+.bottomSection {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+/* ===== Card chung ===== */
+.card {
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 18px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+  margin-top: -10px;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+}
+
+.card h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #2a4d9e;
+  margin-bottom: 10px;
+  margin-top: -5px;
+}
+
+.card p {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 8px;
+}
+
+.card input,
+.card button {
+  width: 100%;
+  box-sizing: border-box; /* Quan trọng nhất */
+  border-radius: 12px;
+  font-size: 14px;
+}
+
+/* Input */
+.card input {
+  border: 1px solid #dce3f3;
+  padding: 10px; /* làm cho khớp button */
+  margin-top: 10px;
+}
+
+/* Button */
+.card button {
+  background: #eef4ff;
+  border: none;
+  padding: 10px;
+  margin-top: 10px;
+  font-weight: 500;
+  color: #1e63ff;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.card button:hover {
+  background: #dfeaff;
+}
+
+.card input:focus {
+  border-color: #1e63ff;
+  outline: none;
+}
+
+/* ===== Biểu đồ mô phỏng ===== */
+.chartMock {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+  margin-top: 12px;
+  height: 70px;
+}
+
+.chartMock div {
+  flex: 1;
+  background: linear-gradient(180deg, #b9ccff, #dfe7ff);
+  border-radius: 10px;
+  height: calc(25px + 45px * var(--h, 0.5));
+  transition: height 0.3s ease;
+}
+
+.emotionCard {
+  background: #ffffff;
+  padding: 32px;
+  margin-top: -10px;
+  border-radius: 18px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+}
+
+.emotionCard h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: #2a4d9e;
+  margin: -10px 0 4px;
+}
+
+.emotionCard h3 {
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 1px;
+}
+
+.emotionSelect p {
+  font-size: 14px;
+  color: #666;
+}
+
+.emojiGroup {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.emojiGroup span {
+  font-size: 40px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.emojiGroup span:hover {
+  transform: scale(1.2);
+}
+
+.chartWrapper {
+  margin-top: 40px;
+  width: 100%;
+}
+
+.chartLabels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  padding: 0 2px;
+}
+
+.chartLabels span {
+  font-size: 12px;
+  color: #555;
+  width: 100%;
+  text-align: center;
+}

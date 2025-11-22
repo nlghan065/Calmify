@@ -4,20 +4,26 @@ import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import styles from "../../style/Auth.module.css";
 import AuthLayout from "../../components/Auth/AuthLayout";
 import { authAPI } from "@/api/auth/authAPI";
+import { useNavigate } from "react-router-dom";
 
 const { Title, Paragraph } = Typography;
 const AntdLink = Typography.Link;
 
 const LoginPage = () => {
+  const navigate = useNavigate();
+
   const onFinish = async (values) => {
     try {
       const res = await authAPI.login(values);
       message.success(res.data.message || "Đăng nhập thành công! 💚");
 
-      // ✅ Lưu token vào localStorage (nếu backend trả về)
+      // ✅ Lưu token
       if (res.data.token) localStorage.setItem("token", res.data.token);
 
       console.log("Dữ liệu đăng nhập:", res.data);
+
+      // ✅ Chuyển hướng sau khi đăng nhập thành công
+      navigate("/home");
     } catch (err) {
       message.error(err.response?.data?.message || "Sai thông tin đăng nhập!");
     }

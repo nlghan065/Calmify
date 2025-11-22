@@ -92,6 +92,7 @@ const OTPPage = () => {
               size="large"
               loading={loading}
               className={styles.loginBtn}
+              onClick={"reset"}
             >
               Xác nhận OTP
             </Button>
