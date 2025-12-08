@@ -14,12 +14,19 @@ import TestPHQ9 from "./pages/test-PHQ9/TestPHQ9";
 import Test2PHQ9 from "./pages/test-PHQ9/Test2PHQ9";
 import ResultPHQ9 from "./pages/test-PHQ9/ResultPHQ9";
 import Home from "./pages/Home";
-import ChatAI from "./pages/ChatAI";
+import ChatAI from "./pages/chat/ChatAI";
 import TestInfo from "./pages/test/TestInfo";
 import Category from "./pages/test/Category";
 import Test1 from "./pages/test/Test1";
 import Test2 from "./pages/test/Test2";
 import Result from "./pages/test/Result";
+import EmotionDiary from "./pages/emotional/EmotionDiary";
+import StatisticsPage from "./pages/statistics/StatisticsPage";
+import MethodsPage from "./pages/methods/MethodsPage";
+import MethodDetailPage from "./pages/methods/MethodDetailPage";
+import LessonDetailPage from "./pages/methods/LessonDetailPage";
+import SupportCentersPage from "./pages/hotline/SupportCentersPage";
+import ProfilePage from "./pages/profile/ProfilePage";
 
 function App() {
   return (
@@ -42,6 +49,13 @@ function App() {
         <Route path="/test1" element={<Test1 />} />
         <Route path="/test2" element={<Test2 />} />
         <Route path="/result" element={<Result />} />
+        <Route path="/emotional" element={<EmotionDiary />} />
+        <Route path="/statistics" element={<StatisticsPage />} />
+        <Route path="/methods" element={<MethodsPage />} />
+        <Route path="/detail/:methodId" element={<MethodDetailPage />} />
+        <Route path="/lesson/:lessonId" element={<LessonDetailPage />} />
+        <Route path="/hotline" element={<SupportCentersPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
       </Routes>
 
       {/* Toast container để hiển thị thông báo */}

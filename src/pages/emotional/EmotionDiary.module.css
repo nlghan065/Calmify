@@ -1,0 +1,159 @@
+.container {
+  padding: 10px 15px;
+  overflow-y: auto;
+}
+
+/* HEADER */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header h2 {
+  margin: 0;
+}
+
+.addBtn {
+  background: #1e63ff;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* FORM */
+.form {
+  background: white;
+  padding: 20px;
+  border-radius: 14px;
+  margin-top: 15px;
+}
+
+/* Header trong form */
+.formHeader {
+  margin-bottom: 14px;
+}
+
+.formHeader h3 {
+  margin: 0 0 6px 0;
+  font-size: 17px;
+  font-weight: 600;
+  color: #111827;
+  letter-spacing: 0.2px;
+}
+.formHeader p {
+  margin: 0;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.collapseBtn {
+  background: transparent;
+  border: none;
+  font-weight: 600;
+  color: #3b82f6;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+textarea {
+  width: 100%;
+  max-width: 100%;
+  min-height: 70px; /* ✅ thấp hơn */
+  max-height: 110px; /* ✅ không quá cao */
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  font-size: 14px;
+  outline: none;
+  resize: none;
+  margin-top: 10px;
+  box-sizing: border-box; /* ✅ chống tràn ngang */
+  transition: 0.2s;
+}
+
+.actions {
+  margin-top: 15px;
+  display: flex;
+  gap: 10px;
+}
+
+.actions button {
+  padding: 8px 18px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  background: #1e63ff;
+  color: white;
+}
+
+.cancel {
+  background: #eee !important;
+  color: #333 !important;
+}
+
+/* LIST */
+.list {
+  margin-top: 20px;
+}
+
+.card {
+  display: flex;
+  gap: 15px;
+  padding: 16px;
+  background: white;
+  border-radius: 14px;
+  margin-bottom: 12px;
+}
+
+.card h4 {
+  margin: 0;
+}
+
+.card span {
+  font-size: 13px;
+  color: gray;
+  margin-left: 10px;
+}
+
+.icon {
+  font-size: 32px;
+}
+
+/* ========== ACTION BUTTONS ========== */
+.actions {
+  margin-top: 16px;
+  display: flex;
+  gap: 12px;
+}
+
+.actions button {
+  flex: 1;
+  padding: 10px 0;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  background: #1e63ff;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.actions button:hover {
+  opacity: 0.9;
+}
+
+.cancel {
+  background: #f3f4f6 !important;
+  color: #374151 !important;
+}
+
+/* ========== LIST ========== */
+.list {
+  margin-top: 24px;
+}

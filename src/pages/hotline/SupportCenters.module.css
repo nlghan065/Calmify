@@ -1,0 +1,83 @@
+.container {
+  padding: 10px;
+}
+
+.title {
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.subtitle {
+  color: #555;
+  margin-bottom: 20px;
+}
+
+.sectionTitle {
+  font-size: 20px;
+  margin: 20px 0 10px;
+  font-weight: 600;
+}
+
+.cardList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: 0.25s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+.cardTitle {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.cardDesc {
+  color: #666;
+  margin: 6px 0;
+}
+
+.button {
+  display: inline-block;
+  margin-top: 8px;
+  background: #ff4d4f;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 15px;
+  text-decoration: none;
+}
+
+.actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+.buttonSmall {
+  padding: 6px 12px;
+  background: #4c7dff;
+  color: white;
+  font-size: 14px;
+  border-radius: 8px;
+  text-decoration: none;
+}
+
+.buttonSmallOutline {
+  padding: 6px 12px;
+  border: 1px solid #4c7dff;
+  color: #4c7dff;
+  font-size: 14px;
+  border-radius: 8px;
+  text-decoration: none;
+}

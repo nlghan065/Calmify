@@ -1,0 +1,104 @@
+.container {
+  width: 100%;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.subtitle {
+  color: #666;
+  margin-bottom: 20px;
+}
+
+/* ==== STAT CARDS ==== */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 25px;
+}
+
+.card {
+  background: #fff;
+  padding: 18px;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid #eef2f6;
+}
+
+.value {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 6px 0;
+}
+
+.trendUp {
+  color: #2a7a39;
+  font-size: 14px;
+}
+
+/* ==== CHART ==== */
+.chartBox {
+  background: #fff;
+  padding: 20px;
+  border-radius: 14px;
+  border: 1px solid #eef2f6;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin-bottom: 30px;
+}
+
+.chartHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.filterGroup button {
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1px solid #d7dce2;
+  background: #fff;
+  cursor: pointer;
+  margin-left: 6px;
+}
+
+.activeFilter {
+  background: #3f82ff;
+  color: white;
+  border-color: #3f82ff;
+}
+
+/* ==== DISTRIBUTION ==== */
+.distributionBox {
+  background: #fff;
+  padding: 20px;
+  border-radius: 14px;
+  border: 1px solid #eef2f6;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.row {
+  margin-bottom: 16px;
+}
+
+.rowHeader {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.progress {
+  width: 100%;
+  height: 8px;
+  background: #eef1f6;
+  border-radius: 10px;
+}
+
+.progressFill {
+  height: 8px;
+  border-radius: 10px;
+}
