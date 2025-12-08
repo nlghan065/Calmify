@@ -8,22 +8,39 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  Legend,
 } from "recharts";
 
 import styles from "./Statistics.module.css";
 
 export default function StatisticsPage() {
   const [filter, setFilter] = useState("week");
+  const [timeOfDay, setTimeOfDay] = useState("fullDay"); // Sáng, Trưa, Tối, Cả ngày
 
+  // Dữ liệu cảm xúc theo ngày và thời gian
   const emotionChart = [
-    { day: "T2", value: 4 },
-    { day: "T3", value: 3.5 },
-    { day: "T4", value: 4.6 },
-    { day: "T5", value: 3.2 },
-    { day: "T6", value: 3.8 },
-    { day: "T7", value: 4.5 },
-    { day: "CN", value: 4.3 },
+    { day: "T2", morning: 4, noon: 3.5, evening: 4.2, fullDay: 4 },
+    { day: "T3", morning: 3.5, noon: 4, evening: 4.5, fullDay: 4 },
+    { day: "T4", morning: 4.2, noon: 3.8, evening: 4.1, fullDay: 4 },
+    { day: "T5", morning: 3.2, noon: 3.5, evening: 3.8, fullDay: 3.5 },
+    { day: "T6", morning: 3.8, noon: 4.2, evening: 4, fullDay: 4 },
+    { day: "T7", morning: 4.5, noon: 4, evening: 4.3, fullDay: 4.3 },
+    { day: "CN", morning: 4.3, noon: 4.1, evening: 4.5, fullDay: 4.3 },
   ];
+
+  // Tính toán các số liệu tóm tắt
+  const averageEmotion = (
+    emotionChart.reduce((sum, item) => sum + item.fullDay, 0) /
+    emotionChart.length
+  ).toFixed(1);
+
+  const bestDay = emotionChart.reduce((prev, curr) =>
+    prev.fullDay > curr.fullDay ? prev : curr
+  ).day;
+
+  const worstDay = emotionChart.reduce((prev, curr) =>
+    prev.fullDay < curr.fullDay ? prev : curr
+  ).day;
 
   const emotionDistribution = [
     { label: "Rất vui", amount: 12, percent: 27, color: "#4caf50" },
@@ -45,20 +62,20 @@ export default function StatisticsPage() {
         <div className={styles.statsGrid}>
           <div className={styles.card}>
             <h3>Cảm xúc trung bình</h3>
-            <p className={styles.value}>4.2/5</p>
+            <p className={styles.value}>{averageEmotion}/5</p>
             <span className={styles.trendUp}>+0.3</span>
           </div>
 
           <div className={styles.card}>
-            <h3>Ngày ghi nhật ký</h3>
-            <p className={styles.value}>45</p>
-            <span className={styles.trendUp}>+12%</span>
+            <h3>Ngày tốt nhất</h3>
+            <p className={styles.value}>{bestDay}</p>
+            <span className={styles.trendUp}>🎉</span>
           </div>
 
           <div className={styles.card}>
-            <h3>Bài test hoàn thành</h3>
-            <p className={styles.value}>8</p>
-            <span className={styles.trendUp}>+3</span>
+            <h3>Ngày xấu nhất</h3>
+            <p className={styles.value}>{worstDay}</p>
+            <span className={styles.trendDown}>😔</span>
           </div>
 
           <div className={styles.card}>
@@ -70,30 +87,83 @@ export default function StatisticsPage() {
 
         {/* ==== CHART ==== */}
         <div className={styles.chartBox}>
-          <div className={styles.chartHeader}>
-            <h3>Biểu đồ cảm xúc</h3>
+          <div
+            className={styles.chartHeader}
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            {/* Bên trái: Filter thời gian trong ngày (chỉ khi chọn "Ngày") */}
+            <div style={{ display: "flex", gap: "5px" }}>
+              {filter === "day" && (
+                <div
+                  className={styles.timeFilter}
+                  style={{ display: "flex", gap: "5px" }}
+                >
+                  <button
+                    className={timeOfDay === "morning" ? styles.activeTime : ""}
+                    onClick={() => setTimeOfDay("morning")}
+                  >
+                    Sáng
+                  </button>
+                  <button
+                    className={timeOfDay === "noon" ? styles.activeTime : ""}
+                    onClick={() => setTimeOfDay("noon")}
+                  >
+                    Trưa
+                  </button>
+                  <button
+                    className={timeOfDay === "evening" ? styles.activeTime : ""}
+                    onClick={() => setTimeOfDay("evening")}
+                  >
+                    Tối
+                  </button>
+                  <button
+                    className={timeOfDay === "fullDay" ? styles.activeTime : ""}
+                    onClick={() => setTimeOfDay("fullDay")}
+                  >
+                    Cả ngày
+                  </button>
+                </div>
+              )}
+            </div>
 
-            <div className={styles.filterGroup}>
+            {/* Bên phải: Filter Ngày/Tuần/Tháng/Năm luôn hiển thị */}
+            <div
+              className={styles.filterGroup}
+              style={{ display: "flex", gap: "5px" }}
+            >
               <button
-                className={filter === "day" ? styles.activeFilter : ""}
+                className={`${styles.filterButton} ${
+                  filter === "day" ? styles.activeFilter : ""
+                }`}
                 onClick={() => setFilter("day")}
               >
                 Ngày
               </button>
+
               <button
-                className={filter === "week" ? styles.activeFilter : ""}
+                className={`${styles.filterButton} ${
+                  filter === "week" ? styles.activeFilter : ""
+                }`}
                 onClick={() => setFilter("week")}
               >
                 Tuần
               </button>
               <button
-                className={filter === "month" ? styles.activeFilter : ""}
+                className={`${styles.filterButton} ${
+                  filter === "month" ? styles.activeFilter : ""
+                }`}
                 onClick={() => setFilter("month")}
               >
                 Tháng
               </button>
               <button
-                className={filter === "year" ? styles.activeFilter : ""}
+                className={`${styles.filterButton} ${
+                  filter === "year" ? styles.activeFilter : ""
+                }`}
                 onClick={() => setFilter("year")}
               >
                 Năm
@@ -101,15 +171,22 @@ export default function StatisticsPage() {
             </div>
           </div>
 
-          <ResponsiveContainer width="100%" height={250}>
+          <ResponsiveContainer width="100%" height={300}>
             <LineChart data={emotionChart}>
               <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
               <XAxis dataKey="day" />
               <YAxis domain={[1, 5]} />
-              <Tooltip />
+              <Tooltip
+                formatter={(value) => `${value}/5`}
+                labelFormatter={(day) => {
+                  const dayData = emotionChart.find((d) => d.day === day);
+                  return `${day} - Sáng:${dayData.morning} Trưa:${dayData.noon} Tối:${dayData.evening} Cả ngày:${dayData.fullDay}`;
+                }}
+              />
+              <Legend />
               <Line
                 type="monotone"
-                dataKey="value"
+                dataKey={timeOfDay}
                 stroke="#3f82ff"
                 strokeWidth={3}
                 dot={{ r: 5 }}

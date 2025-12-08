@@ -1,11 +1,13 @@
 .container {
+  margin: -20px auto;
   padding: 20px;
 }
 
 .title {
-  font-size: 26px;
-  font-weight: 700;
-  margin-bottom: 6px;
+  font-size: 28px !important;
+  font-weight: 700 !important;
+  color: #2a4d9e !important;
+  margin-bottom: 20px !important;
 }
 
 .subtitle {
@@ -80,6 +82,7 @@
 }
 
 /* === Method Detail Page === */
+
 .headerBox {
   display: flex;
   background: white;
@@ -108,9 +111,10 @@
 }
 
 .sectionTitle {
-  margin-bottom: 16px;
-  font-size: 20px;
-  font-weight: 600;
+  font-size: 28px !important;
+  font-weight: 700 !important;
+  color: #2a4d9e !important;
+  margin-bottom: 20px !important;
 }
 
 /* Card giống MethodsPage */
@@ -184,10 +188,10 @@
 }
 
 .title {
-  font-size: 28px;
-  margin-bottom: 18px;
-  font-weight: 700;
-  color: #222;
+  font-size: 28px !important;
+  font-weight: 700 !important;
+  color: #2a4d9e !important;
+  margin-bottom: 20px !important;
 }
 
 /* -------- KHUNG CHUNG -------- */
