@@ -1,12 +1,23 @@
-import React, { useState, useEffect } from "react";
-import { Form, Input, Button, Typography, message } from "antd";
+import React, { useEffect, useState } from "react";
+import { Input, Button, Typography } from "antd";
 import { NumberOutlined, MailOutlined } from "@ant-design/icons";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import styles from "../../style/Auth.module.css";
 import AuthLayout from "../../components/Auth/AuthLayout";
 import { authAPI } from "@/api/auth/authAPI";
+import { toast } from "react-toastify";
+import { useForm, Controller } from "react-hook-form";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 const { Title, Paragraph } = Typography;
+
+const schema = yup.object().shape({
+  otp: yup
+    .string()
+    .required("Vui lòng nhập mã OTP.")
+    .length(6, "OTP phải gồm 6 số"),
+});
 
 const OTPPage = () => {
   const navigate = useNavigate();
@@ -14,28 +25,35 @@ const OTPPage = () => {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // ✅ Lấy email từ URL (?email=abc@gmail.com)
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({ resolver: yupResolver(schema) });
+
   useEffect(() => {
     const emailFromURL = searchParams.get("email");
-    if (emailFromURL) {
-      setEmail(emailFromURL);
-    } else {
-      message.warning("Vui lòng nhập email trước khi xác thực OTP!");
+    if (!emailFromURL) {
+      toast.warning("Vui lòng nhập email trước khi xác thực OTP!");
       navigate("/forgot");
+    } else {
+      setEmail(emailFromURL);
     }
-  }, [searchParams, navigate]);
+  }, [navigate, searchParams]);
 
-  const onFinish = async (values) => {
+  const onSubmit = async ({ otp }) => {
     setLoading(true);
     try {
-      const res = await authAPI.verifyOtp({ email, otp: values.otp });
-      message.success(res.data.message || "Xác thực thành công! 🌿");
+      const res = await authAPI.verifyOtp({ email, otp });
+
+      toast.success(res.data.message || "Xác thực thành công! 🌿");
 
       const resetToken = res.data.resetToken;
+
       navigate(`/reset-password?token=${resetToken}&email=${email}`);
     } catch (err) {
-      message.error(
-        err.response?.data?.message || "Mã OTP không hợp lệ hoặc đã hết hạn!"
+      toast.error(
+        err.response?.data?.message || "OTP không hợp lệ hoặc hết hạn!"
       );
     } finally {
       setLoading(false);
@@ -48,61 +66,57 @@ const OTPPage = () => {
         <Title level={1} className={styles.title}>
           Xác thực OTP
         </Title>
+
         <Paragraph className={styles.subtitle}>
-          Mã OTP đã được gửi tới <b>{email}</b>. Hãy nhập mã bên dưới để tiếp
-          tục 💌
+          Mã OTP đã được gửi tới <b>{email}</b>. Nhập mã để tiếp tục 💌
         </Paragraph>
 
-        <Form
-          name="otp_form"
-          layout="vertical"
-          onFinish={onFinish}
-          className={styles.form}
-          autoComplete="off"
-        >
-          {/* Ẩn hoặc hiển thị email ở dạng disabled */}
-          <Form.Item label="Email đăng ký">
-            <Input
-              prefix={<MailOutlined />}
-              value={email}
-              disabled
-              size="large"
-            />
-          </Form.Item>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          {/* Email */}
+          <Input
+            prefix={<MailOutlined />}
+            value={email}
+            disabled
+            size="large"
+          />
 
-          {/* Mã OTP */}
-          <Form.Item
-            label="Mã OTP"
-            name="otp"
-            rules={[{ required: true, message: "Vui lòng nhập mã OTP." }]}
+          <div style={{ marginTop: 12 }}>
+            <label className={styles.label}>
+              <span className={styles.required}>*</span> Mã OTP
+            </label>
+            <Controller
+              name="otp"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  prefix={<NumberOutlined />}
+                  placeholder="Nhập mã OTP gồm 6 số"
+                  size="large"
+                  maxLength={6}
+                />
+              )}
+            />
+            {errors.otp && <p className={styles.error}>{errors.otp.message}</p>}
+          </div>
+
+          <Button
+            type="primary"
+            htmlType="submit"
+            block
+            size="large"
+            loading={loading}
+            className={styles.loginBtn}
+            style={{ marginTop: 16 }}
           >
-            <Input
-              prefix={<NumberOutlined />}
-              placeholder="Nhập mã OTP gồm 6 chữ số"
-              size="large"
-              maxLength={6}
-            />
-          </Form.Item>
-
-          <Form.Item>
-            <Button
-              type="primary"
-              htmlType="submit"
-              block
-              size="large"
-              loading={loading}
-              className={styles.loginBtn}
-              onClick={"reset"}
-            >
-              Xác nhận OTP
-            </Button>
-          </Form.Item>
-        </Form>
+            Xác nhận OTP
+          </Button>
+        </form>
 
         <Paragraph className={styles.signupText}>
           Không nhận được mã?{" "}
           <a href="/forgot" className={styles.signupLink}>
-            Gửi lại mã OTP
+            Gửi lại OTP
           </a>
         </Paragraph>
       </div>

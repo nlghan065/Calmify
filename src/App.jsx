@@ -1,5 +1,8 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import Loading from "./pages/Loading";
 import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
@@ -40,6 +43,15 @@ function App() {
         <Route path="/test2" element={<Test2 />} />
         <Route path="/result" element={<Result />} />
       </Routes>
+
+      {/* Toast container để hiển thị thông báo */}
+      <ToastContainer
+        position="top-right"
+        autoClose={2000}
+        hideProgressBar={false}
+        pauseOnHover={true}
+        theme="colored"
+      />
     </BrowserRouter>
   );
 }

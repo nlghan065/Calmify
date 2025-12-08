@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import LayoutContainer from "@/Layout/LayoutContainer";
 import styles from "./ChatAI.module.css";
 import axios from "axios";
@@ -8,10 +8,19 @@ export default function ChatAI() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const chatEndRef = useRef(null);
+
+  const scrollToBottom = () => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
   const sendMessage = async () => {
     if (!input.trim()) return;
 
-    // tin nhắn người dùng
     const userMsg = { sender: "user", text: input };
     setMessages((prev) => [...prev, userMsg]);
 
@@ -33,10 +42,7 @@ export default function ChatAI() {
     } catch (err) {
       setMessages((prev) => [
         ...prev,
-        {
-          sender: "bot",
-          text: "⚠️ Lỗi kết nối server. Vui lòng thử lại.",
-        },
+        { sender: "bot", text: "⚠️ Lỗi kết nối server. Vui lòng thử lại." },
       ]);
     }
 
@@ -59,6 +65,9 @@ export default function ChatAI() {
           ))}
 
           {loading && <div className={styles.botMessage}>Đang trả lời...</div>}
+
+          {/* AUTO SCROLL TARGET */}
+          <div ref={chatEndRef} />
         </div>
 
         <div className={styles.inputArea}>

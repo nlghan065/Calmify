@@ -1,158 +1,115 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
+import { Input, Button, Typography, Select, Row, Col } from "antd";
 import {
-  Form,
-  Input,
-  Button,
-  Typography,
-  Select,
-  Row,
-  Col,
-  message,
-} from "antd";
-import {
-  LockOutlined,
   MailOutlined,
+  LockOutlined,
   CheckCircleTwoTone,
 } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { useForm, Controller, useWatch } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+
 import styles from "../../style/Auth.module.css";
 import AuthLayout from "../../components/Auth/AuthLayout";
 import { authAPI } from "@/api/auth/authAPI";
 
 const { Title, Paragraph } = Typography;
-const AntdLink = Typography.Link;
 
-const getAntdOptions = (arr) =>
-  arr.map((item) => ({ value: item, label: item }));
+// ---------------------- TUỔI DÙNG 1 LẦN ----------------------
+const AGE_OPTIONS = Array.from({ length: 11 }, (_, i) => ({
+  value: 16 + i,
+  label: 16 + i,
+}));
 
-const ageOptions = getAntdOptions([16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26]);
-const genderOptions = getAntdOptions(["Nam", "Nữ", "Khác"]);
-const jobOptions = getAntdOptions([
-  "Học sinh",
-  "Sinh viên",
-  "Đã đi làm",
-  "Khác",
-]);
+// ----------------------- SCHEMA VALIDATION ---------------------
+const schema = yup.object().shape({
+  age: yup
+    .number()
+    .typeError("Tuổi không hợp lệ")
+    .required("Hãy chọn tuổi")
+    .min(16)
+    .max(60),
+  gender: yup.string().required("Hãy chọn giới tính"),
+  job: yup.string().required("Hãy chọn công việc"),
+  email: yup
+    .string()
+    .matches(/^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/, "Email chưa đúng định dạng")
+    .required("Bạn quên nhập email rồi"),
+  password: yup
+    .string()
+    .required("Bạn quên nhập mật khẩu rồi")
+    .min(8, "Ít nhất 8 ký tự")
+    .matches(/[A-Z]/, "Phải có chữ hoa (A–Z)")
+    .matches(/[a-z]/, "Phải có chữ thường (a–z)")
+    .matches(/\d/, "Phải có số (0–9)")
+    .matches(/[\W_]/, "Phải có ký tự đặc biệt (!@#$...)"),
+  confirmPassword: yup
+    .string()
+    .required("Bạn quên nhập lại mật khẩu rồi")
+    .oneOf([yup.ref("password")], "Mật khẩu không khớp"),
+});
+
+// ---------------------------------------------------------------
 
 const RegisterPage = () => {
-  const [form] = Form.useForm();
-  const [passwordChecks, setPasswordChecks] = useState({
-    length: false,
-    upper: false,
-    lower: false,
-    number: false,
-    special: false,
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors, isValid },
+  } = useForm({
+    resolver: yupResolver(schema),
+    mode: "onChange",
   });
 
-  const onFinish = async (values) => {
-    try {
-      const res = await authAPI.register(values);
-      message.success(res.data.message || "Đăng ký thành công! 🌿");
-      console.log("Dữ liệu đăng ký:", res.data);
-      form.resetFields();
-      setPasswordChecks({
-        length: false,
-        upper: false,
-        lower: false,
-        number: false,
-        special: false,
-      });
-    } catch (err) {
-      message.error(err.response?.data?.message || "Đăng ký thất bại!");
-    }
+  // ---------------- WATCH PASSWORD ----------------
+  const passwordValue = useWatch({ control, name: "password" }) || "";
+
+  const passwordChecks = {
+    length: passwordValue.length >= 8,
+    upper: /[A-Z]/.test(passwordValue),
+    lower: /[a-z]/.test(passwordValue),
+    number: /\d/.test(passwordValue),
+    special: /[\W_]/.test(passwordValue),
   };
 
-  const onFinishFailed = () => {
-    message.error("Vui lòng kiểm tra lại thông tin nhé!");
-  };
-
-  // ✅ Cập nhật trạng thái các điều kiện khi người dùng nhập mật khẩu
-  const handlePasswordChange = (e) => {
-    const value = e.target.value;
-    setPasswordChecks({
-      length: value.length >= 8,
-      upper: /[A-Z]/.test(value),
-      lower: /[a-z]/.test(value),
-      number: /\d/.test(value),
-      special: /[\W_]/.test(value),
-    });
-  };
-
-  const JobSpecificFields = () => {
-    const jobValue = Form.useWatch("job", form);
-    let fieldToRender = null;
-
-    if (jobValue === "Sinh viên") {
-      fieldToRender = (
-        <Col span={12}>
-          <Form.Item
-            label="Ngành đang học"
-            name="major"
-            rules={[{ required: true, message: "Hãy chọn ngành đang học" }]}
-          >
-            <Select
-              placeholder="Chọn ngành học"
-              size="large"
-              options={getAntdOptions(["CNTT", "Kinh tế", "Nghệ thuật"])}
-            />
-          </Form.Item>
-        </Col>
-      );
-    } else if (jobValue === "Học sinh") {
-      fieldToRender = (
-        <Col span={12}>
-          <Form.Item
-            label="Khối đang học"
-            name="grade"
-            rules={[{ required: true, message: "Hãy chọn khối học" }]}
-          >
-            <Select
-              placeholder="Chọn khối học"
-              size="large"
-              options={getAntdOptions(["Khối tự nhiên", "Khối xã hội"])}
-            />
-          </Form.Item>
-        </Col>
-      );
-    }
-
+  // ---------------- COMPONENT CHECK ITEM -----------------
+  const renderCheckItem = useCallback((label, ok) => {
     return (
-      <Row gutter={16}>
-        <Col span={fieldToRender ? 12 : 24}>
-          <Form.Item
-            label="Công việc"
-            name="job"
-            rules={[{ required: true, message: "Hãy chọn công việc" }]}
-          >
-            <Select
-              placeholder="Chọn công việc"
-              size="large"
-              options={jobOptions}
-            />
-          </Form.Item>
-        </Col>
-        {fieldToRender}
-      </Row>
+      <li
+        className={styles.checkItem}
+        style={{ color: ok ? "#52c41a" : "#9e9e9e" }}
+      >
+        <CheckCircleTwoTone twoToneColor={ok ? "#52c41a" : "#d9d9d9"} />
+        {label}
+      </li>
     );
-  };
+  }, []);
 
-  const renderCheckItem = (label, passed) => (
-    <li
-      style={{
-        listStyle: "none",
-        display: "flex",
-        alignItems: "center",
-        gap: "6px",
-        color: passed ? "#52c41a" : "#999",
-        fontSize: "13px",
-      }}
-    >
-      <CheckCircleTwoTone
-        twoToneColor={passed ? "#52c41a" : "#d9d9d9"}
-        style={{ fontSize: "14px" }}
-      />
-      {label}
-    </li>
-  );
+  // ---------------------- SUBMIT ----------------------
+  const onSubmit = async (values) => {
+    try {
+      setLoading(true);
+
+      const res = await authAPI.register(values);
+
+      toast.success(res.data.message || "Đăng ký thành công! 🌿");
+      navigate("/login");
+      reset();
+    } catch (err) {
+      if (!err.response) toast.error("Không thể kết nối server!");
+      else if (err.response.status === 409)
+        toast.error("Email đã được sử dụng!");
+      else toast.error(err.response?.data?.message || "Đăng ký thất bại!");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <AuthLayout>
@@ -164,151 +121,210 @@ const RegisterPage = () => {
           Bắt đầu lại, nhẹ nhàng thôi 🌿
         </Paragraph>
 
-        <Form
-          form={form}
-          name="register_form"
-          layout="vertical"
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
-          autoComplete="off"
-        >
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item
-                label="Tuổi"
+        <form onSubmit={handleSubmit(onSubmit)}>
+          {/* ------------- ROW 3 FIELD (AGE/GENDER/JOB) ------------- */}
+          <Row className={styles.row3}>
+            {/* AGE */}
+            <Col span={7}>
+              <label htmlFor="age" className={styles.label}>
+                <span className={styles.required}>*</span> Tuổi
+              </label>
+              <Controller
                 name="age"
-                rules={[{ required: true, message: "Hãy chọn tuổi" }]}
-              >
-                <Select
-                  placeholder="Chọn tuổi"
-                  size="large"
-                  options={ageOptions}
-                />
-              </Form.Item>
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    id="age"
+                    style={{ width: "100%" }}
+                    size="large"
+                    className={styles.bigSelect}
+                    placeholder="Chọn tuổi"
+                    options={AGE_OPTIONS}
+                    onChange={(v) => field.onChange(Number(v))}
+                  />
+                )}
+              />
+              {errors.age && (
+                <p className={styles.error}>{errors.age.message}</p>
+              )}
             </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Giới tính"
+
+            {/* GENDER */}
+            <Col span={8}>
+              <label htmlFor="gender" className={styles.label}>
+                <span className={styles.required}>*</span> Giới tính
+              </label>
+              <Controller
                 name="gender"
-                rules={[{ required: true, message: "Hãy chọn giới tính" }]}
-              >
-                <Select
-                  placeholder="Chọn giới tính"
-                  size="large"
-                  options={genderOptions}
-                />
-              </Form.Item>
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    id="gender"
+                    style={{ width: "100%" }}
+                    size="large"
+                    className={styles.bigSelect}
+                    placeholder="Chọn giới tính"
+                    options={["Nam", "Nữ", "Khác"].map((v) => ({
+                      value: v,
+                      label: v,
+                    }))}
+                  />
+                )}
+              />
+              {errors.gender && (
+                <p className={styles.error}>{errors.gender.message}</p>
+              )}
+            </Col>
+
+            {/* JOB */}
+            <Col span={9}>
+              <label htmlFor="job" className={styles.label}>
+                <span className={styles.required}>*</span> Công việc
+              </label>
+              <Controller
+                name="job"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    id="job"
+                    style={{ width: "100%" }}
+                    size="large"
+                    className={styles.bigSelect}
+                    placeholder="Chọn công việc"
+                    options={["Học sinh", "Sinh viên", "Đã đi làm", "Khác"].map(
+                      (v) => ({
+                        value: v,
+                        label: v,
+                      })
+                    )}
+                  />
+                )}
+              />
+              {errors.job && (
+                <p className={styles.error}>{errors.job.message}</p>
+              )}
             </Col>
           </Row>
 
-          <JobSpecificFields />
+          {/* ------------------- EMAIL ------------------- */}
+          <div className={styles.inputRow}>
+            <label htmlFor="email" className={styles.label}>
+              <span className={styles.required}>*</span> Email
+            </label>
 
-          <Form.Item
-            label="Email"
-            name="email"
-            rules={[
-              { required: true, message: "Bạn quên nhập email rồi." },
-              { type: "email", message: "Định dạng email chưa đúng!" },
-            ]}
-          >
-            <Input
-              prefix={<MailOutlined />}
-              placeholder="Nhập email"
-              size="large"
+            <Controller
+              name="email"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  id="email"
+                  prefix={<MailOutlined />}
+                  placeholder="Nhập email"
+                  size="large"
+                  className={styles.bigInput}
+                />
+              )}
             />
-          </Form.Item>
 
-          {/* ✅ Mật khẩu có checklist */}
-          <Form.Item
-            label="Mật khẩu"
-            name="password"
-            rules={[
-              { required: true, message: "Bạn quên nhập mật khẩu rồi." },
-              {
-                validator: (_, value) => {
-                  // Nếu chưa nhập, không cần kiểm tra thêm — đã có rule required xử lý
-                  if (!value) return Promise.resolve();
+            {errors.email && (
+              <p className={styles.error}>{errors.email.message}</p>
+            )}
+          </div>
 
-                  const checks = [
-                    /.{8,}/.test(value),
-                    /[A-Z]/.test(value),
-                    /[a-z]/.test(value),
-                    /\d/.test(value),
-                    /[!@#$%^&*]/.test(value),
-                  ];
+          {/* ------------------- PASSWORD ------------------- */}
+          <div className={styles.inputRow}>
+            <label htmlFor="password" className={styles.label}>
+              <span className={styles.required}>*</span> Mật khẩu
+            </label>
 
-                  if (checks.every(Boolean)) return Promise.resolve();
-                  return Promise.reject("Mật khẩu chưa đủ điều kiện.");
-                },
-              },
-            ]}
+            <Controller
+              name="password"
+              control={control}
+              render={({ field }) => (
+                <Input.Password
+                  {...field}
+                  id="password"
+                  prefix={<LockOutlined />}
+                  placeholder="Nhập mật khẩu"
+                  size="large"
+                  className={styles.bigInput}
+                />
+              )}
+            />
+
+            {errors.password && (
+              <p className={styles.error}>{errors.password.message}</p>
+            )}
+          </div>
+
+          {/* ------------------- CONFIRM PASSWORD ------------------- */}
+          <div className={styles.inputRow}>
+            <label htmlFor="confirmPassword" className={styles.label}>
+              <span className={styles.required}>*</span> Nhập lại mật khẩu
+            </label>
+
+            <Controller
+              name="confirmPassword"
+              control={control}
+              render={({ field }) => (
+                <Input.Password
+                  {...field}
+                  id="confirmPassword"
+                  prefix={<LockOutlined />}
+                  placeholder="Nhập lại mật khẩu"
+                  size="large"
+                  className={styles.bigInput}
+                />
+              )}
+            />
+
+            {errors.confirmPassword && (
+              <p className={styles.error}>{errors.confirmPassword.message}</p>
+            )}
+          </div>
+
+          {/* -------- PASSWORD CHECKLIST ---------- */}
+          <Row gutter={[16, 4]} style={{ marginTop: 8 }}>
+            <Col xs={24} sm={12}>
+              <ul className={styles.checkList}>
+                {renderCheckItem("Ít nhất 8 ký tự", passwordChecks.length)}
+                {renderCheckItem("Chứa chữ hoa (A–Z)", passwordChecks.upper)}
+                {renderCheckItem("Chứa chữ thường (a–z)", passwordChecks.lower)}
+              </ul>
+            </Col>
+
+            <Col xs={24} sm={12}>
+              <ul className={styles.checkList}>
+                {renderCheckItem("Có ít nhất 1 số", passwordChecks.number)}
+                {renderCheckItem("Có ký tự đặc biệt", passwordChecks.special)}
+              </ul>
+            </Col>
+          </Row>
+
+          {/* ------------------- BUTTON ------------------- */}
+          <Button
+            htmlType="submit"
+            type="primary"
+            block
+            size="large"
+            loading={loading}
+            className={styles.loginBtn}
+            disabled={!isValid || loading}
+            style={{ marginTop: 18 }}
           >
-            <>
-              <Input.Password
-                prefix={<LockOutlined />}
-                placeholder="Nhập mật khẩu"
-                size="large"
-                onChange={(e) => {
-                  const value = e.target.value;
-                  form.setFieldValue("password", value);
-                  setPasswordChecks({
-                    length: value.length >= 8,
-                    upper: /[A-Z]/.test(value),
-                    lower: /[a-z]/.test(value),
-                    number: /\d/.test(value),
-                    special: /[\W_]/.test(value),
-                  });
-                }}
-              />
-
-              <Row gutter={[16, 4]} style={{ marginTop: "8px" }}>
-                <Col xs={24} sm={12}>
-                  <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-                    {renderCheckItem("Ít nhất 8 ký tự", passwordChecks.length)}
-                    {renderCheckItem(
-                      "Chứa chữ hoa (A–Z)",
-                      passwordChecks.upper
-                    )}
-                    {renderCheckItem(
-                      "Chứa chữ thường (a–z)",
-                      passwordChecks.lower
-                    )}
-                  </ul>
-                </Col>
-                <Col xs={24} sm={12}>
-                  <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-                    {renderCheckItem(
-                      "Có ít nhất 1 số (0–9)",
-                      passwordChecks.number
-                    )}
-                    {renderCheckItem(
-                      "Có ký tự đặc biệt (!@#$...)",
-                      passwordChecks.special
-                    )}
-                  </ul>
-                </Col>
-              </Row>
-            </>
-          </Form.Item>
-
-          <Form.Item>
-            <Button
-              type="primary"
-              htmlType="submit"
-              block
-              size="large"
-              className={styles.loginBtn}
-            >
-              Tạo tài khoản
-            </Button>
-          </Form.Item>
-        </Form>
+            Tạo tài khoản
+          </Button>
+        </form>
 
         <Paragraph className={styles.signupText}>
           Bạn đã có tài khoản?{" "}
-          <AntdLink href="/login" className={styles.signupLink}>
+          <Typography.Link href="/login" className={styles.signupLink}>
             Đăng nhập ngay 💫
-          </AntdLink>
+          </Typography.Link>
         </Paragraph>
       </div>
     </AuthLayout>

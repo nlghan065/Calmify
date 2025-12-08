@@ -1,31 +1,52 @@
 import React from "react";
-import { Form, Input, Button, Typography, message } from "antd";
+import { Input, Button, Typography } from "antd";
 import { MailOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { useForm, Controller } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+
 import styles from "../../style/Auth.module.css";
 import AuthLayout from "../../components/Auth/AuthLayout";
 import { authAPI } from "@/api/auth/authAPI";
 
 const { Title, Paragraph } = Typography;
-const AntdLink = Typography.Link;
+
+// ==== VALIDATION EMAIL ====
+const schema = yup.object().shape({
+  email: yup
+    .string()
+    .matches(/^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/, "Email chưa đúng định dạng")
+    .required("Bạn quên nhập email rồi"),
+});
 
 const ForgotPage = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = React.useState(false);
 
-  const onFinish = async (values) => {
+  const {
+    handleSubmit,
+    control,
+    formState: { errors, isValid },
+  } = useForm({
+    resolver: yupResolver(schema),
+    mode: "onChange",
+  });
+
+  const onSubmit = async (values) => {
     try {
-      const res = await authAPI.forgotPassword(values);
-      message.success(res.data.message || "Mã OTP đã được gửi qua email 💌");
+      setLoading(true);
 
-      // ✅ Chuyển hướng sang trang nhập OTP, truyền kèm email
+      const res = await authAPI.forgotPassword(values);
+      toast.success(res.data.message || "Mã OTP đã được gửi 💌");
+
       navigate(`/verify-otp?email=${values.email}`);
     } catch (err) {
-      message.error(err.response?.data?.message || "Không thể gửi yêu cầu!");
+      toast.error(err.response?.data?.message || "Không thể gửi yêu cầu!");
+    } finally {
+      setLoading(false);
     }
-  };
-
-  const onFinishFailed = () => {
-    message.error("Vui lòng nhập đúng email để tiếp tục 🌿");
   };
 
   return (
@@ -38,47 +59,49 @@ const ForgotPage = () => {
           Đừng lo, chúng tôi sẽ gửi mã OTP đến email của bạn 🌱
         </Paragraph>
 
-        <Form
-          name="forgot_password_form"
-          layout="vertical"
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
-          autoComplete="off"
-          className={styles.form}
-        >
-          <Form.Item
-            label="Email đăng ký"
-            name="email"
-            rules={[
-              { required: true, message: "Vui lòng nhập email của bạn." },
-              { type: "email", message: "Định dạng email chưa đúng!" },
-            ]}
-          >
-            <Input
-              prefix={<MailOutlined />}
-              placeholder="Nhập email đã đăng ký"
-              size="large"
-            />
-          </Form.Item>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          {/* EMAIL */}
+          <label className={styles.label}>
+            <span className={styles.required}>*</span> Email
+          </label>
 
-          <Form.Item>
-            <Button
-              type="primary"
-              htmlType="submit"
-              block
-              size="large"
-              className={styles.loginBtn}
-            >
-              Gửi mã OTP
-            </Button>
-          </Form.Item>
-        </Form>
+          <Controller
+            name="email"
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                prefix={<MailOutlined />}
+                placeholder="Nhập email đã đăng ký"
+                size="large"
+              />
+            )}
+          />
+
+          {errors.email && (
+            <p className={styles.error}>{errors.email.message}</p>
+          )}
+
+          {/* BUTTON SEND OTP */}
+          <Button
+            type="primary"
+            htmlType="submit"
+            block
+            size="large"
+            loading={loading}
+            disabled={!isValid || loading}
+            className={styles.loginBtn}
+            style={{ marginTop: 16 }}
+          >
+            Gửi mã OTP
+          </Button>
+        </form>
 
         <Paragraph className={styles.signupText}>
           Nhớ lại mật khẩu rồi à?{" "}
-          <AntdLink href="/login" className={styles.signupLink}>
+          <a href="/login" className={styles.signupLink}>
             Đăng nhập ngay 💫
-          </AntdLink>
+          </a>
         </Paragraph>
       </div>
     </AuthLayout>

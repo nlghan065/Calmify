@@ -1,24 +1,50 @@
 import React, { useState } from "react";
-import { Form, Input, Button, Typography, message } from "antd";
+import { Input, Button, Typography } from "antd";
 import { LockOutlined, KeyOutlined } from "@ant-design/icons";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import styles from "../../style/Auth.module.css";
 import AuthLayout from "../../components/Auth/AuthLayout";
 import { authAPI } from "@/api/auth/authAPI";
 
+import { toast } from "react-toastify";
+import { useForm, Controller } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+
 const { Title, Paragraph } = Typography;
+
+// ---------------- VALIDATION ----------------
+const schema = yup.object().shape({
+  password: yup
+    .string()
+    .required("Vui lòng nhập mật khẩu mới.")
+    .min(6, "Mật khẩu phải có ít nhất 6 ký tự."),
+  confirmPassword: yup
+    .string()
+    .required("Vui lòng xác nhận mật khẩu.")
+    .oneOf([yup.ref("password")], "Mật khẩu xác nhận không khớp!"),
+});
+// --------------------------------------------
 
 const ResetPasswordPage = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
 
   const resetToken = searchParams.get("token");
   const email = searchParams.get("email");
 
-  const onFinish = async (values) => {
+  const [loading, setLoading] = useState(false);
+
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm({ resolver: yupResolver(schema) });
+
+  // ---------------- SUBMIT ---------------- //
+  const onSubmit = async (values) => {
     if (!resetToken) {
-      message.error("Thiếu mã xác thực (token). Vui lòng quay lại bước OTP!");
+      toast.error("Thiếu token xác thực! Vui lòng làm lại từ bước OTP.");
       return;
     }
 
@@ -30,19 +56,15 @@ const ResetPasswordPage = () => {
         confirmPassword: values.confirmPassword,
         email,
       });
-      message.success(res.data.message || "Đặt lại mật khẩu thành công! 🌿");
+
+      toast.success(res.data.message || "Đặt lại mật khẩu thành công! 🌿");
+
       navigate("/login");
     } catch (err) {
-      message.error(
-        err.response?.data?.message || "Không thể đặt lại mật khẩu!"
-      );
+      toast.error(err.response?.data?.message || "Không thể đặt lại mật khẩu!");
     } finally {
       setLoading(false);
     }
-  };
-
-  const onFinishFailed = () => {
-    message.error("Vui lòng nhập đầy đủ thông tin 🌱");
   };
 
   return (
@@ -51,71 +73,70 @@ const ResetPasswordPage = () => {
         <Title level={1} className={styles.title}>
           Đặt lại mật khẩu
         </Title>
+
         <Paragraph className={styles.subtitle}>
           Nhập mật khẩu mới để hoàn tất quá trình khôi phục tài khoản 🌿
         </Paragraph>
 
-        <Form
-          name="reset_password_form"
-          layout="vertical"
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
-          className={styles.form}
-          autoComplete="off"
-        >
-          <Form.Item
-            label="Mật khẩu mới"
-            name="password"
-            rules={[
-              { required: true, message: "Vui lòng nhập mật khẩu mới." },
-              { min: 6, message: "Mật khẩu phải có ít nhất 6 ký tự." },
-            ]}
-          >
-            <Input.Password
-              prefix={<LockOutlined />}
-              placeholder="Nhập mật khẩu mới"
-              size="large"
+        {/* FORM react-hook-form */}
+        <form onSubmit={handleSubmit(onSubmit)}>
+          {/* Password */}
+          <div>
+            <label className={styles.label}>
+              <span className={styles.required}>*</span> Mật khẩu
+            </label>
+            <Controller
+              name="password"
+              control={control}
+              render={({ field }) => (
+                <Input.Password
+                  {...field}
+                  prefix={<LockOutlined />}
+                  placeholder="Nhập mật khẩu mới"
+                  size="large"
+                />
+              )}
             />
-          </Form.Item>
+            {errors.password && (
+              <p className={styles.error}>{errors.password.message}</p>
+            )}
+          </div>
 
-          <Form.Item
-            label="Xác nhận mật khẩu"
-            name="confirmPassword"
-            dependencies={["password"]}
-            rules={[
-              { required: true, message: "Vui lòng xác nhận lại mật khẩu." },
-              ({ getFieldValue }) => ({
-                validator(_, value) {
-                  if (!value || getFieldValue("password") === value) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject(
-                    new Error("Mật khẩu xác nhận không khớp!")
-                  );
-                },
-              }),
-            ]}
-          >
-            <Input.Password
-              prefix={<KeyOutlined />}
-              placeholder="Nhập lại mật khẩu"
-              size="large"
+          {/* Confirm Password */}
+          <div style={{ marginTop: 12 }}>
+            <label className={styles.label}>
+              <span className={styles.required}>*</span> Xác nhận mật khẩu
+            </label>
+            <Controller
+              name="confirmPassword"
+              control={control}
+              render={({ field }) => (
+                <Input.Password
+                  {...field}
+                  prefix={<KeyOutlined />}
+                  placeholder="Xác nhận mật khẩu"
+                  size="large"
+                />
+              )}
             />
-          </Form.Item>
+            {errors.confirmPassword && (
+              <p className={styles.error}>{errors.confirmPassword.message}</p>
+            )}
+          </div>
 
-          <Form.Item>
-            <Button
-              type="primary"
-              htmlType="submit"
-              block
-              size="large"
-              loading={loading}
-              className={styles.loginBtn}
-            >
-              Xác nhận đổi mật khẩu
-            </Button>
-          </Form.Item>
-        </Form>
+          {/* Submit */}
+          <Button
+            type="primary"
+            htmlType="submit"
+            block
+            size="large"
+            loading={loading}
+            className={styles.loginBtn}
+            style={{ marginTop: 16 }}
+          >
+            Xác nhận đổi mật khẩu
+          </Button>
+        </form>
       </div>
     </AuthLayout>
   );

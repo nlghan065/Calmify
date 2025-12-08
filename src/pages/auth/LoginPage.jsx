@@ -1,36 +1,58 @@
 import React from "react";
-import { Form, Input, Button, Typography, message } from "antd";
+import { Input, Button, Typography } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import styles from "../../style/Auth.module.css";
 import AuthLayout from "../../components/Auth/AuthLayout";
 import { authAPI } from "@/api/auth/authAPI";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { useForm, Controller } from "react-hook-form";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 const { Title, Paragraph } = Typography;
 const AntdLink = Typography.Link;
 
+// =================== VALIDATION ===================
+const schema = yup.object().shape({
+  email: yup
+    .string()
+    .matches(/^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/, "Email chưa đúng định dạng")
+    .required("Bạn quên nhập email rồi"),
+  password: yup.string().required("Bạn quên nhập mật khẩu rồi."),
+});
+
+// =================== LOGIN PAGE ===================
 const LoginPage = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = React.useState(false);
 
-  const onFinish = async (values) => {
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, isValid },
+  } = useForm({
+    resolver: yupResolver(schema),
+    mode: "onChange",
+  });
+
+  const onSubmit = async (values) => {
     try {
+      setLoading(true);
+
       const res = await authAPI.login(values);
-      message.success(res.data.message || "Đăng nhập thành công! 💚");
+      toast.success(res.data.message || "Đăng nhập thành công! 🌿");
 
-      // ✅ Lưu token
-      if (res.data.token) localStorage.setItem("token", res.data.token);
+      if (res.data.token) {
+        localStorage.setItem("token", res.data.token);
+      }
 
-      console.log("Dữ liệu đăng nhập:", res.data);
-
-      // ✅ Chuyển hướng sau khi đăng nhập thành công
       navigate("/home");
     } catch (err) {
-      message.error(err.response?.data?.message || "Sai thông tin đăng nhập!");
+      toast.error(err.response?.data?.message || "Sai thông tin đăng nhập!");
+    } finally {
+      setLoading(false);
     }
-  };
-
-  const onFinishFailed = () => {
-    message.error("Vui lòng kiểm tra lại thông tin 🌿");
   };
 
   return (
@@ -40,67 +62,83 @@ const LoginPage = () => {
           Đăng nhập
         </Title>
         <Paragraph className={styles.subtitle}>
-          Bình yên bắt đầu từ chính bạn. 🌿
+          Bình yên bắt đầu từ chính bạn 🌿
         </Paragraph>
 
-        <Form
-          name="login_form"
-          layout="vertical"
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
-          autoComplete="off"
-        >
-          <Form.Item
-            label="Email"
+        {/* ===== FORM ===== */}
+        <form onSubmit={handleSubmit(onSubmit)}>
+          {/* Email */}
+          <label className={styles.label}>
+            <span className={styles.required}>*</span> Email
+          </label>
+
+          <Controller
             name="email"
-            rules={[
-              { required: true, message: "Bạn quên nhập email rồi." },
-              { type: "email", message: "Định dạng email chưa đúng!" },
-            ]}
-          >
-            <Input
-              prefix={<UserOutlined />}
-              placeholder="Nhập email của bạn"
-              size="large"
-            />
-          </Form.Item>
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                prefix={<UserOutlined />}
+                placeholder="Nhập email của bạn"
+                size="large"
+              />
+            )}
+          />
+          {errors.email && (
+            <p className={styles.error}>{errors.email.message}</p>
+          )}
 
-          <Form.Item
-            label="Mật khẩu"
-            name="password"
-            rules={[{ required: true, message: "Bạn quên nhập mật khẩu rồi." }]}
-          >
-            <Input.Password
-              prefix={<LockOutlined />}
-              placeholder="Nhập mật khẩu"
-              size="large"
-            />
-          </Form.Item>
+          {/* Password */}
+          <div style={{ marginTop: 12 }}>
+            <label className={styles.label}>
+              <span className={styles.required}>*</span> Mật khẩu
+            </label>
 
-          <Form.Item className={styles.actions}>
-            <div style={{ textAlign: "right" }}>
-              <AntdLink href="/forgot" className={styles.forgot}>
+            <Controller
+              name="password"
+              control={control}
+              render={({ field }) => (
+                <Input.Password
+                  {...field}
+                  prefix={<LockOutlined />}
+                  placeholder="Nhập mật khẩu"
+                  size="large"
+                />
+              )}
+            />
+            {errors.password && (
+              <p className={styles.error}>{errors.password.message}</p>
+            )}
+
+            <div style={{ textAlign: "right", marginTop: 8 }}>
+              <AntdLink onClick={() => navigate("/forgot")}>
                 Quên mật khẩu?
               </AntdLink>
             </div>
-          </Form.Item>
+          </div>
 
-          <Form.Item>
-            <Button
-              type="primary"
-              htmlType="submit"
-              block
-              size="large"
-              className={styles.loginBtn}
-            >
-              Đăng nhập
-            </Button>
-          </Form.Item>
-        </Form>
+          {/* ===== BUTTON LOGIN ===== */}
+          <Button
+            type="primary"
+            htmlType="submit"
+            block
+            size="large"
+            loading={loading}
+            disabled={!isValid || loading}
+            className={styles.loginBtn}
+            style={{ marginTop: 16 }}
+          >
+            Đăng nhập
+          </Button>
+        </form>
 
+        {/* ===== SIGNUP LINK ===== */}
         <Paragraph className={styles.signupText}>
           Bạn chưa có tài khoản?{" "}
-          <AntdLink href="/register" className={styles.signupLink}>
+          <AntdLink
+            onClick={() => navigate("/register")}
+            className={styles.signupLink}
+          >
             Tạo mới ngay 💫
           </AntdLink>
         </Paragraph>

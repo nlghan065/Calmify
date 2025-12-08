@@ -1,201 +1,262 @@
+/* ------------------- FONT ------------------- */
 @import url("https://fonts.googleapis.com/css2?family=Pacifico&display=swap");
 
+/* ------------------- LAYOUT ------------------- */
 .container {
   display: flex;
   background-color: var(--color-bg);
   font-family: var(--font-family);
   min-height: 100vh;
-  overflow: hidden;
 }
 
-/* ------- Cột trái (form) ------- */
+/* ------------------- LEFT COLUMN ------------------- */
 .left {
-  flex: 1;
+  flex: 2;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 40px 100px;
+  padding: 40px 70px; /* giảm padding */
   position: relative;
 }
 
 .backBtn {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   font-weight: 500;
   color: #555;
   cursor: pointer;
   margin-bottom: 20px;
-  transition: color 0.2s ease;
+  transition: 0.2s ease;
 }
 
 .backBtn:hover {
   color: #000;
 }
-/* ------- Form chính ------- */
+
+/* ------------------- FORM BOX ------------------- */
 .formBox {
-  max-width: 380px;
+  max-width: 620px; /* nhỏ gọn hơn */
   width: 100%;
-  margin: 0px 70px;
+  margin: 0 auto;
 }
 
 .title {
-  font-size: 34px;
+  font-size: 30px; /* giảm */
   color: var(--color-primary);
-  margin-top: 0;
-  margin-bottom: 2px; /* giảm khoảng cách với subtitle */
-  line-height: 0.5; /* thu gọn chiều cao dòng */
+  margin-bottom: 4px;
+  line-height: 1.1;
 }
 
 .subtitle {
   color: var(--color-text);
   opacity: 0.75;
-  font-size: 15px;
-  margin-top: 0; /* xóa khoảng cách mặc định trên của Paragraph */
-  margin-bottom: 10px; /* giữ chút khoảng cách nhẹ phía dưới */
-  line-height: 1.5; /* thu gọn dòng */
+  font-size: 14px;
+  margin-bottom: 18px;
+  line-height: 1.4;
 }
 
-/* ------- Input / Button ------- */
+/* ------------------- GRID (3 cột) ------------------- */
+.row3 {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+}
+
+.row3 > div {
+  flex: 1;
+}
+
+@media (max-width: 768px) {
+  .row3 {
+    flex-direction: column;
+  }
+}
+
+/* ------------------- INPUT ------------------- */
 .ant-input,
-.ant-select-selector {
+.ant-select-selector,
+.ant-input-password {
   border-radius: 8px !important;
-  padding: 10px !important;
+  padding: 9px 10px !important; /* giảm chiều cao */
   border: 1px solid #d9d9d9 !important;
-  box-shadow: none !important;
-  transition: all 0.3s ease !important;
+  transition: all 0.25s ease !important;
+  font-size: 14px !important;
 }
 
 .ant-input:focus,
+.ant-input-password:focus-within,
 .ant-select-focused .ant-select-selector {
   border-color: var(--color-accent) !important;
-  box-shadow: 0 0 0 3px rgba(0, 119, 182, 0.15) !important;
+  box-shadow: 0 0 0 2px rgba(0, 119, 182, 0.15) !important;
 }
 
-/* Nút chính */
+.error {
+  color: #ff4d4f;
+  font-size: 13px;
+  margin-top: 3px;
+  font-weight: 500;
+}
+
+/* ------------------- BUTTON ------------------- */
 .loginBtn {
   background-color: var(--color-primary) !important;
   border-color: var(--color-primary) !important;
   color: var(--color-white) !important;
   font-weight: 600 !important;
-  height: auto !important;
-  padding: 12px 16px !important;
   border-radius: 10px !important;
-  transition: 0.3s ease !important;
-  font-size: 16px !important;
-  letter-spacing: 0.3px;
+  padding: 12px !important; /* giảm button */
+  font-size: 15px !important;
+  transition: 0.25s ease !important;
 }
 
-.loginBtn:hover,
-.loginBtn:focus {
+.loginBtn:hover {
   background-color: var(--color-primary-dark) !important;
-  border-color: var(--color-primary-dark) !important;
-  color: var(--color-white) !important;
-  box-shadow: 0 4px 10px rgba(27, 73, 101, 0.25) !important;
+  box-shadow: 0 5px 14px rgba(30, 80, 110, 0.25) !important;
 }
 
 .loginBtn:active {
   background-color: var(--color-accent) !important;
-  border-color: var(--color-accent) !important;
 }
 
-/* ------- Quên mật khẩu / Đăng ký ------- */
-.actions {
-  text-align: right;
-  margin-bottom: 20px;
+/* ------------------- LINK BELOW FORM ------------------- */
+.signupText {
+  font-size: 13px;
+  text-align: center;
+  color: var(--color-text);
+  opacity: 0.85;
+  margin-top: 14px;
 }
 
+.signupLink,
 .forgot {
-  color: #069eeb !important;
-  font-size: 14px;
+  color: #069eeb;
+  font-weight: 600;
   text-decoration: none;
-  transition: 0.3s;
 }
 
+.signupLink:hover,
 .forgot:hover {
   text-decoration: underline;
 }
 
-.signupText {
-  margin-top: -10px;
-  font-size: 14px;
-  text-align: center;
-  color: var(--color-text);
-  opacity: 0.8;
-  margin-bottom: -100px;
-}
-
-.signupLink {
-  color: #069eeb !important;
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.signupLink:hover {
-  text-decoration: underline;
-}
-
-/* ------- Cột phải (hình ảnh) ------- */
+/* ------------------- RIGHT COLUMN (IMAGE) ------------------- */
 .right {
-  flex: 1;
+  flex: 0.6;
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: hidden;
+  margin-left: -20px;
+  padding: 90px 40px;
 }
 
 .formWrapper {
-  background-color: rgba(255, 255, 255, 0.9); /* trắng hơi mờ để dịu nền */
-  border-radius: 20px; /* bo mềm mại hơn */
-  padding: 20px 48px; /* khoảng cách đều */
-  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.08); /* đổ bóng nhẹ */
-  backdrop-filter: blur(6px); /* hiệu ứng mờ nền nhẹ (glass) */
-  transition: all 0.3s ease;
-  margin-top: -30px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 18px;
+  padding: 28px 34px; /* giảm padding */
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.07);
+  backdrop-filter: blur(6px);
+  transition: 0.3s ease;
+  max-width: 1100px; /* gọn hơn */
 }
 
 .formWrapper:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
 }
 
 .login {
-  width: 600px;
-  height: auto;
-  margin-left: -50px;
+  width: 440px; /* giảm kích thước ảnh */
   object-fit: contain;
-  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.08));
-  transition: transform 0.3s ease;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.1));
+  transition: 0.25s ease;
 }
 
 .login:hover {
   transform: scale(1.02);
 }
 
-/* ------- Responsive (mobile) ------- */
-@media (max-width: 900px) {
+/* ------------------- RESPONSIVE ------------------- */
+@media (max-width: 1000px) {
   .container {
     flex-direction: column;
   }
-
   .left {
-    padding: 40px 40px;
+    padding: 32px 26px;
   }
-
   .right {
-    display: none; /* Ẩn hình để form dễ nhìn hơn */
+    display: none;
   }
-
   .formBox {
     max-width: 100%;
-    margin: 0;
   }
 }
 
+/* ------------------- BASE ------------------- */
 html,
 body {
   margin: 0;
   padding: 0;
   height: 100%;
-  overflow: hidden;
+}
+
+/* LABEL CHO INPUT / SELECT */
+/* LABEL CHO INPUT / SELECT (TO HƠN, ĐẬM HƠN) */
+.label {
+  display: block;
+  font-size: 15px; /* tăng từ 13px → 15px */
+  font-weight: 600;
+  margin-bottom: 6px; /* tăng spacing đẹp hơn */
+  color: var(--color-text);
+  letter-spacing: 0.2px; /* giúp chữ sắc nét */
+}
+
+/* Dấu sao bắt buộc */
+.required {
+  color: #ff4d4f;
+  margin-right: 4px;
+  font-size: 16px; /* to hơn để nổi bật */
+  font-weight: 700;
+}
+
+/* ------------------- BIG INPUT (nhưng đã thu nhỏ) ------------------- */
+.bigInput {
+  height: 42px !important; /* nhỏ hơn */
+  border-radius: 8px !important;
+  font-size: 14px !important;
+}
+
+.bigSelect .ant-select-selector {
+  height: 42px !important;
+  padding: 10px 12px !important;
+  border-radius: 8px !important;
+  font-size: 14px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* ITEM SELECT */
+.bigSelect .ant-select-selection-item {
+  font-size: 14px !important;
+}
+
+/* ------------------- BUTTON DISABLED - CHỐNG SPAM ------------------- */
+.loginBtn:disabled,
+.loginBtn[disabled] {
+  background-color: #9bb8d0 !important; /* màu nhạt rõ ràng */
+  border-color: #9bb8d0 !important;
+  color: #ffffff !important;
+  cursor: not-allowed !important;
+  opacity: 0.7 !important;
+
+  /* Disable mọi hiệu ứng */
+  box-shadow: none !important;
+  transform: none !important;
+  pointer-events: none !important;
+}
+
+/* Vô hiệu hóa hover khi disabled */
+.loginBtn:disabled:hover {
+  background-color: #9bb8d0 !important;
+  box-shadow: none !important;
 }
