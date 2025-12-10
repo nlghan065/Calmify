@@ -1,89 +1,98 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styles from "./EmotionDiary.module.css";
 import LayoutContainer from "@/Layout/LayoutContainer";
 import EmotionCheck from "@/components/Dashboard/EmotionCheck";
+import { createDiaryNote, getDiaryNotes } from "@/api/emotion/emotionAPI";
+import { toast } from "react-toastify";
 
 export default function EmotionDiary() {
   const [showForm, setShowForm] = useState(false);
   const [selectedEmotion, setSelectedEmotion] = useState(null);
-  const [content, setContent] = useState("");
-  const [notes, setNotes] = useState([
-    {
-      emotion: "😊",
-      title: "Ổn áp",
-      date: "15/01/2024",
-      content: "Hôm nay là một ngày tuyệt vời!",
-    },
-    {
-      emotion: "😊",
-      title: "Ổn áp",
-      date: "15/01/2024",
-      content: "Hôm nay là một ngày tuyệt vời!",
-    },
-  ]);
+  const [note, setNote] = useState("");
+  const [notes, setNotes] = useState([]);
 
-  const handleSave = () => {
-    if (!selectedEmotion || !content.trim()) return;
+  // Load danh sách nhật ký
+  const fetchNotes = async () => {
+    try {
+      const data = await getDiaryNotes();
+      setNotes(data);
+    } catch (err) {
+      console.error(err);
+      toast.error("Không thể tải nhật ký!");
+    }
+  };
 
-    const newNote = {
-      emotion: selectedEmotion.icon,
-      title: selectedEmotion.label,
-      date: new Date().toLocaleDateString("vi-VN"),
-      content,
+  useEffect(() => {
+    fetchNotes();
+  }, []);
+
+  const handleSave = async () => {
+    if (!selectedEmotion || !note.trim()) {
+      toast.error("Bạn chưa chọn cảm xúc hoặc viết nội dung!");
+      return;
+    }
+
+    // payload đúng BE: { mood, note }
+    const payload = {
+      mood: selectedEmotion.icon,
+      note: note.trim(),
     };
 
-    setNotes([newNote, ...notes]);
-    setSelectedEmotion(null);
-    setContent("");
-    setShowForm(false);
+    try {
+      await createDiaryNote(payload);
+      toast.success("Đã lưu nhật ký!");
+      setShowForm(false);
+      setSelectedEmotion(null);
+      setNote("");
+      fetchNotes(); // cập nhật danh sách mới
+    } catch (err) {
+      console.error(err);
+      toast.error("Lưu thất bại!");
+    }
   };
 
   return (
     <LayoutContainer>
       <div className={styles.container}>
-        {/* HEADER */}
         <div className={styles.header}>
           <h2>Nhật ký cảm xúc</h2>
-
           <button
             className={styles.addBtn}
             onClick={() => setShowForm(!showForm)}
+            type="button"
           >
             {showForm ? "Thu gọn ↑" : "+ Thêm"}
           </button>
         </div>
 
-        {/* FORM */}
         {showForm && (
           <div className={styles.form}>
-            {/* ✅ HEADER TRONG FORM */}
             <div className={styles.formHeader}>
               <h3>Ghi lại cảm xúc của bạn để hiểu bản thân hơn nhé!</h3>
-              <p>
-                Hãy chọn mức độ cảm xúc và viết xuống những điều bạn đang nghĩ.
-              </p>
             </div>
 
             <EmotionCheck
               mode="picker"
-              value={selectedEmotion?.icon}
               onChange={(emo) => setSelectedEmotion(emo)}
             />
 
             <textarea
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
               placeholder="Hôm nay của bạn thế nào?"
             />
 
             <div className={styles.actions}>
-              <button onClick={handleSave}>Lưu</button>
+              <button type="button" onClick={handleSave}>
+                Lưu
+              </button>
               <button
+                type="button"
                 className={styles.cancel}
                 onClick={() => {
                   setShowForm(false);
                   setSelectedEmotion(null);
-                  setContent("");
+                  setNote("");
                 }}
               >
                 Hủy
@@ -92,16 +101,13 @@ export default function EmotionDiary() {
           </div>
         )}
 
-        {/* LIST */}
         <div className={styles.list}>
           {notes.map((item, index) => (
             <div key={index} className={styles.card}>
-              <div className={styles.icon}>{item.emotion}</div>
+              <div className={styles.icon}>{item.mood}</div>
               <div>
-                <h4>
-                  {item.title} <span>{item.date}</span>
-                </h4>
-                <p>{item.content}</p>
+                <p>{item.note}</p>
+                <span>{new Date(item.createdAt).toLocaleString()}</span>
               </div>
             </div>
           ))}
