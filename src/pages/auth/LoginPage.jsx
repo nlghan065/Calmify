@@ -42,9 +42,11 @@ const LoginPage = () => {
 
       const res = await authAPI.login(values);
       toast.success(res.data.message || "Đăng nhập thành công! 🌿");
+      console.log("Storing token and user info in localStorage", res.data);
 
-      if (res.data.token) {
-        localStorage.setItem("token", res.data.token);
+      if (res.data.data.token) {
+        localStorage.setItem("token", res.data.data.token);
+        localStorage.setItem("user", JSON.stringify(res.data.data.user));
       }
 
       navigate("/home");
@@ -59,7 +61,7 @@ const LoginPage = () => {
     <AuthLayout>
       <div className={styles.formBox}>
         <Title level={1} className={styles.title}>
-          Đăng nhập
+          Đăng nhập1111
         </Title>
         <Paragraph className={styles.subtitle}>
           Bình yên bắt đầu từ chính bạn 🌿

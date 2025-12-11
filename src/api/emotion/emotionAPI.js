@@ -9,8 +9,10 @@ export const checkTodayEmotion = async (data) => {
     console.log("[API] Sending checkTodayEmotion data:", data);
 
     const token = localStorage.getItem("token");
+    const user = JSON.parse(localStorage.getItem("user"));
 
-    const res = await fetch(`${BASE_URL}/emotions`, {
+    console.log("[API] Retrieved token:", token);
+    const res = await fetch(`${BASE_URL}/emotions/${user.id}`, {
       // bỏ /check
       method: "POST",
       headers: {
@@ -44,10 +46,15 @@ export const checkTodayEmotion = async (data) => {
  * @param {Object} data - { mood, note }
  */
 export const createDiaryNote = async (data) => {
+  const token = localStorage.getItem("token");
+  const user = JSON.parse(localStorage.getItem("user"));
   try {
-    const res = await fetch(`${BASE_URL}/emotions/diary`, {
+    const res = await fetch(`${BASE_URL}/emotions/${user.id}`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token ? `Bearer ${token}` : "",
+      },
       credentials: "include",
       body: JSON.stringify(data), // chỉ gửi { mood, note }
     });
@@ -65,10 +72,12 @@ export const createDiaryNote = async (data) => {
  * @returns Array [{ mood, note, createdAt }]
  */
 export const getDiaryNotes = async () => {
+  const token = localStorage.getItem("token");
+  const user = JSON.parse(localStorage.getItem("user"));
+
   try {
-    const res = await fetch(`${BASE_URL}/emotions/diary`, {
+    const res = await fetch(`${BASE_URL}/emotions/${user.id}`, {
       method: "GET",
-      credentials: "include",
     });
 
     if (!res.ok) throw new Error("Failed to load diary notes");

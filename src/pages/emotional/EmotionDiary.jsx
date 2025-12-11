@@ -1,9 +1,17 @@
 import { useState, useEffect } from "react";
 import styles from "./EmotionDiary.module.css";
 import LayoutContainer from "@/Layout/LayoutContainer";
-import EmotionCheck from "@/components/Dashboard/EmotionCheck";
 import { createDiaryNote, getDiaryNotes } from "@/api/emotion/emotionAPI";
 import { toast } from "react-toastify";
+
+// Danh sách cảm xúc
+const EMOTIONS = [
+  { id: 1, icon: "😭", label: "Rất buồn" },
+  { id: 2, icon: "😔", label: "Buồn" },
+  { id: 3, icon: "😐", label: "Bình thường" },
+  { id: 4, icon: "😊", label: "Ổn áp" },
+  { id: 5, icon: "😆", label: "Vui vẻ" },
+];
 
 export default function EmotionDiary() {
   const [showForm, setShowForm] = useState(false);
@@ -14,10 +22,12 @@ export default function EmotionDiary() {
   // Load danh sách nhật ký
   const fetchNotes = async () => {
     try {
-      const data = await getDiaryNotes();
-      setNotes(data);
+      const response = await getDiaryNotes();
+      console.log("[EmotionDiary] Fetched notes:", response);
+      // Backend trả về { message, data }
+      setNotes(response || []);
     } catch (err) {
-      console.error(err);
+      console.error("[EmotionDiary] Error fetching notes:", err);
       toast.error("Không thể tải nhật ký!");
     }
   };
@@ -27,26 +37,26 @@ export default function EmotionDiary() {
   }, []);
 
   const handleSave = async () => {
-    if (!selectedEmotion || !note.trim()) {
-      toast.error("Bạn chưa chọn cảm xúc hoặc viết nội dung!");
+    if (!selectedEmotion) {
+      toast.error("Vui lòng chọn cảm xúc!");
       return;
     }
 
-    // payload đúng BE: { mood, note }
     const payload = {
       mood: selectedEmotion.icon,
       note: note.trim(),
     };
 
     try {
-      await createDiaryNote(payload);
+      const result = await createDiaryNote(payload);
+      console.log("[EmotionDiary] Save result:", result);
       toast.success("Đã lưu nhật ký!");
       setShowForm(false);
       setSelectedEmotion(null);
       setNote("");
-      fetchNotes(); // cập nhật danh sách mới
+      fetchNotes();
     } catch (err) {
-      console.error(err);
+      console.error("[EmotionDiary] Error saving note:", err);
       toast.error("Lưu thất bại!");
     }
   };
@@ -54,6 +64,7 @@ export default function EmotionDiary() {
   return (
     <LayoutContainer>
       <div className={styles.container}>
+        {/* Header + nút thêm */}
         <div className={styles.header}>
           <h2>Nhật ký cảm xúc</h2>
           <button
@@ -65,30 +76,47 @@ export default function EmotionDiary() {
           </button>
         </div>
 
+        {/* Form ghi nhật ký */}
         {showForm && (
           <div className={styles.form}>
-            <div className={styles.formHeader}>
-              <h3>Ghi lại cảm xúc của bạn để hiểu bản thân hơn nhé!</h3>
+            <h3>Ghi lại cảm xúc của bạn để hiểu bản thân hơn!</h3>
+
+            {/* Chọn cảm xúc */}
+            <div className={styles.emotionButtons}>
+              {EMOTIONS.map((emo) => (
+                <button
+                  key={emo.id}
+                  type="button"
+                  className={`${styles.emotionBtn} ${
+                    selectedEmotion?.id === emo.id ? styles.activeEmotion : ""
+                  }`}
+                  onClick={() => setSelectedEmotion(emo)}
+                >
+                  {emo.icon} <span className={styles.label}>{emo.label}</span>
+                </button>
+              ))}
             </div>
 
-            <EmotionCheck
-              mode="picker"
-              onChange={(emo) => setSelectedEmotion(emo)}
-            />
-
+            {/* Ghi note */}
             <textarea
               value={note}
               onChange={(e) => setNote(e.target.value)}
               placeholder="Hôm nay của bạn thế nào?"
+              className={styles.textarea}
             />
 
+            {/* Nút lưu/hủy */}
             <div className={styles.actions}>
-              <button type="button" onClick={handleSave}>
+              <button
+                type="button"
+                onClick={handleSave}
+                className={styles.saveBtn}
+              >
                 Lưu
               </button>
               <button
                 type="button"
-                className={styles.cancel}
+                className={styles.cancelBtn}
                 onClick={() => {
                   setShowForm(false);
                   setSelectedEmotion(null);
@@ -101,13 +129,17 @@ export default function EmotionDiary() {
           </div>
         )}
 
+        {/* Danh sách nhật ký */}
         <div className={styles.list}>
-          {notes.map((item, index) => (
-            <div key={index} className={styles.card}>
+          {notes.length === 0 && <p>Chưa có nhật ký nào.</p>}
+          {notes.map((item) => (
+            <div key={item.id} className={styles.card}>
               <div className={styles.icon}>{item.mood}</div>
-              <div>
+              <div className={styles.content}>
                 <p>{item.note}</p>
-                <span>{new Date(item.createdAt).toLocaleString()}</span>
+                <span className={styles.date}>
+                  {new Date(item.createdAt).toLocaleString()}
+                </span>
               </div>
             </div>
           ))}
