@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { mergeGuestAssessment } from "@/api/services/assessmentAPI";
 
 const { Title, Paragraph } = Typography;
 const AntdLink = Typography.Link;
@@ -40,13 +41,24 @@ const LoginPage = () => {
     try {
       setLoading(true);
 
+      // 1️⃣ Login
       const res = await authAPI.login(values);
       toast.success(res.data.message || "Đăng nhập thành công! 🌿");
-      console.log("Storing token and user info in localStorage", res.data);
 
-      if (res.data.data.token) {
-        localStorage.setItem("token", res.data.data.token);
-        localStorage.setItem("user", JSON.stringify(res.data.data.user));
+      const { token, user } = res.data.data;
+      if (token) {
+        localStorage.setItem("token", token);
+        localStorage.setItem("user", JSON.stringify(user));
+      }
+
+      // 2️⃣ Merge guest assessment nếu có
+      try {
+        const merged = await mergeGuestAssessment(token, user.id);
+        if (merged) {
+          toast.success("Kết quả bài test vừa làm đã được lưu vào hồ sơ! 📝");
+        }
+      } catch (err) {
+        console.error("❌ Lỗi merge guest assessment:", err);
       }
 
       navigate("/home");
@@ -61,19 +73,17 @@ const LoginPage = () => {
     <AuthLayout>
       <div className={styles.formBox}>
         <Title level={1} className={styles.title}>
-          Đăng nhập1111
+          Đăng nhập
         </Title>
         <Paragraph className={styles.subtitle}>
           Bình yên bắt đầu từ chính bạn 🌿
         </Paragraph>
 
-        {/* ===== FORM ===== */}
         <form onSubmit={handleSubmit(onSubmit)}>
           {/* Email */}
           <label className={styles.label}>
             <span className={styles.required}>*</span> Email
           </label>
-
           <Controller
             name="email"
             control={control}
@@ -95,7 +105,6 @@ const LoginPage = () => {
             <label className={styles.label}>
               <span className={styles.required}>*</span> Mật khẩu
             </label>
-
             <Controller
               name="password"
               control={control}
@@ -119,7 +128,7 @@ const LoginPage = () => {
             </div>
           </div>
 
-          {/* ===== BUTTON LOGIN ===== */}
+          {/* Login Button */}
           <Button
             type="primary"
             htmlType="submit"
@@ -134,7 +143,6 @@ const LoginPage = () => {
           </Button>
         </form>
 
-        {/* ===== SIGNUP LINK ===== */}
         <Paragraph className={styles.signupText}>
           Bạn chưa có tài khoản?{" "}
           <AntdLink

@@ -146,6 +146,7 @@ export default function SupportCentersPage() {
               <div key={index} className={styles.card}>
                 <h4 className={styles.cardTitle}>{item.name}</h4>
                 <p className={styles.cardDesc}>{item.desc}</p>
+                <p className={styles.cardDesc}>Địa chỉ {item.address}</p>
                 <p className={styles.cardInfo}>
                   Số điện thoại: <strong>{item.phone}</strong>
                 </p>
@@ -178,40 +179,6 @@ export default function SupportCentersPage() {
                 <h4 className={styles.cardTitle}>{item.name}</h4>
                 <p className={styles.cardDesc}>📌 {item.address}</p>
                 <p className={styles.cardDesc}>☎ {item.phone}</p>
-                <p className={styles.cardInfo}>
-                  Email: <strong>{item.email}</strong>
-                </p>
-                <p className={styles.cardInfo}>
-                  Website:{" "}
-                  <a
-                    href={item.website}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {item.website}
-                  </a>
-                </p>
-
-                <iframe
-                  src={`https://www.google.com/maps?q=${encodeURIComponent(
-                    item.address
-                  )}&output=embed`}
-                  width="100%"
-                  height="200"
-                  style={{ border: 0, marginTop: "10px", borderRadius: "8px" }}
-                  allowFullScreen=""
-                  loading="lazy"
-                ></iframe>
-
-                <div className={styles.actions}>
-                  <a
-                    href={item.map}
-                    target="_blank"
-                    className={styles.buttonSmallOutline}
-                  >
-                    Xem bản đồ
-                  </a>
-                </div>
               </div>
             ))
           ) : (

@@ -1,13 +1,33 @@
-import React from "react";
-import { Button, Typography } from "antd";
+import React, { useEffect, useState } from "react";
+import { Button, Typography, Spin, Alert } from "antd";
 import LayoutContainer from "@/Layout/LayoutContainer";
 import styles from "@/style/Test.module.css";
 import { useNavigate } from "react-router-dom";
+import { fetchAllTests } from "@/api/test/testAPI";
 
 const { Title } = Typography;
 
 const Category = () => {
   const navigate = useNavigate();
+  const [tests, setTests] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const loadTests = async () => {
+      try {
+        const data = await fetchAllTests();
+        if (data.success) setTests(data.data);
+      } catch {
+        setError("Không thể tải dữ liệu. Hãy chắc chắn Backend đang chạy.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadTests();
+  }, []);
+
+  const handleStart = (testCode) => navigate(`/test-info/${testCode}`);
 
   return (
     <LayoutContainer>
@@ -15,60 +35,43 @@ const Category = () => {
         <Title level={2} className={styles.pageTitle}>
           Chọn bài test
         </Title>
-
-        <div className={styles.testList}>
-          {/* PHQ-9 */}
-          <div className={styles.testBox}>
-            <Title level={3}>PHQ-9</Title>
-            <p>
-              PHQ-9 là bài test sàng lọc trầm cảm gồm 9 câu hỏi, đánh giá mức độ
-              buồn bã, mất hứng thú, mệt mỏi và những thay đổi trong 2 tuần gần
-              nhất.
-            </p>
-            <ul>
-              <li>Thời gian: 3–5 phút</li>
-              <li>Đối tượng: Tất cả mọi người</li>
-              <li>Mục đích: Sàng lọc trầm cảm</li>
-            </ul>
-            <Button type="primary" onClick={() => navigate("/test-info")}>
-              Bắt đầu
-            </Button>
+        {loading ? (
+          <div className={styles.loadingBox}>
+            <Spin size="large" />
+            <div className={styles.loadingText}>Đang tải dữ liệu...</div>
           </div>
-
-          {/* DASS-21 */}
-          <div className={styles.testBox}>
-            <Title level={3}>DASS-21</Title>
-            <p>
-              DASS-21 đo lường mức độ Stress, Lo âu và Trầm cảm thông qua 21 câu
-              hỏi, giúp đánh giá toàn diện tình trạng tinh thần hiện tại.
-            </p>
-            <ul>
-              <li>Thời gian: 5–7 phút</li>
-              <li>Đối tượng: 16 tuổi trở lên</li>
-              <li>Mục đích: Đánh giá Stress – Lo âu – Trầm cảm</li>
-            </ul>
-            <Button type="primary" onClick={() => navigate("/test/dass21")}>
-              Bắt đầu
-            </Button>
+        ) : error ? (
+          <Alert
+            message="Lỗi kết nối"
+            description={error}
+            type="error"
+            showIcon
+          />
+        ) : (
+          <div className={styles.testList}>
+            {tests.length > 0 ? (
+              tests.map((test) => (
+                <div key={test.id} className={styles.testBox}>
+                  <Title level={3}>{test.code}</Title>
+                  <p>{test.description || "Bài test tâm lý."}</p>
+                  <ul className={styles.testMeta}>
+                    <li>
+                      <strong>Chủ đề:</strong> {test.name}
+                    </li>
+                    <li>
+                      <strong>Thời gian:</strong> 3-5 phút
+                    </li>
+                  </ul>
+                  <Button type="primary" onClick={() => handleStart(test.code)}>
+                    Bắt đầu ngay
+                  </Button>
+                </div>
+              ))
+            ) : (
+              <p>Chưa có bài test nào trong hệ thống.</p>
+            )}
           </div>
-
-          {/* RADS */}
-          <div className={styles.testBox}>
-            <Title level={3}>RADS</Title>
-            <p>
-              RADS là thang đo trầm cảm dành cho trẻ vị thành niên, tập trung
-              vào cảm xúc, giấc ngủ, sự tách biệt xã hội và mức độ tự phản ánh.
-            </p>
-            <ul>
-              <li>Thời gian: 5 phút</li>
-              <li>Đối tượng: 12–20 tuổi</li>
-              <li>Mục đích: Sàng lọc trầm cảm ở thanh thiếu niên</li>
-            </ul>
-            <Button type="primary" onClick={() => navigate("/test/rads")}>
-              Bắt đầu
-            </Button>
-          </div>
-        </div>
+        )}
       </div>
     </LayoutContainer>
   );

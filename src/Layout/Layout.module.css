@@ -138,6 +138,7 @@
   display: flex;
   flex-direction: column;
   min-height: 0; /* bắt buộc để chống overflow flex */
+  justify-content: space-between;
 }
 
 /* ===================== HEADER ===================== */
@@ -162,7 +163,6 @@
   color: #666;
 }
 
-/* ===================== PROFILE ICON GROUP ===================== */
 .profile {
   display: flex;
   align-items: center;
@@ -170,30 +170,115 @@
 }
 
 .icon {
-  font-size: 18px;
+  font-size: 1.2rem;
   cursor: pointer;
-  color: #444;
-  transition: 0.2s;
+  color: #555;
 }
 
-.icon:hover {
-  color: #1e63ff;
-}
-
+/* Class cho icon mặc định */
 .avatar {
-  font-size: 20px;
-  background: #f0f3fa;
-  padding: 8px;
-  border-radius: 50%;
+  font-size: 1.5rem;
   cursor: pointer;
-  transition: all 0.25s ease;
+  color: #333;
+  padding: 8px;
+  background: #f0f0f0;
+  border-radius: 50%;
 }
 
-.avatar:hover {
-  background: #1e63ff;
-  color: #fff;
+/* Calmify/src/Layout/Layout.module.css */
+
+/* ... Các class cũ giữ nguyên ... */
+
+/* Container bao quanh Avatar để định vị menu con */
+.profileContainer {
+  position: relative; /* Quan trọng để menu con bám theo */
+  display: flex;
+  align-items: center;
+  gap: 15px;
 }
 
+.headerAvatar {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+}
+
+.headerAvatar:hover {
+  transform: scale(1.05);
+}
+
+/* --- MENU THẢ XUỐNG (DROPDOWN) --- */
+.dropdownMenu {
+  position: absolute;
+  top: 60px; /* Cách avatar một chút */
+  right: 0;
+  background-color: white;
+  min-width: 180px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 8px 0;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+/* Mũi tên nhỏ chỉ lên avatar (trang trí) */
+.dropdownMenu::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  right: 15px;
+  width: 12px;
+  height: 12px;
+  background: white;
+  transform: rotate(45deg);
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  border-left: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.dropdownItem {
+  padding: 10px 20px;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: background 0.2s;
+}
+
+.dropdownItem:hover {
+  background-color: #f5f5f5;
+  color: #1890ff; /* Màu xanh nổi bật khi hover */
+}
+
+/* Class riêng cho nút Đăng xuất */
+.logoutItem {
+  color: #ff4d4f; /* Màu đỏ */
+  border-top: 1px solid #eee;
+  margin-top: 4px;
+  padding-top: 10px;
+}
+
+.logoutItem:hover {
+  background-color: #fff1f0;
+  color: #ff4d4f;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 /* ===================== CONTENT ===================== */
 .content {
   flex: 1;
@@ -207,10 +292,10 @@
 /* ===================== FOOTER ===================== */
 .footer {
   text-align: center;
-  padding: 0;
-  font-size: 10px;
+  padding: 10px 0 -12px 0; /* padding trên 5px, dưới 2px */
+  font-size: 12px;
   color: #888;
-  opacity: 0.6;
-  line-height: 1;
-  margin: 0;
+  opacity: 0.8;
+  line-height: 1.5;
+  margin: 0; /* giữ footer sát phần trên của nó */
 }

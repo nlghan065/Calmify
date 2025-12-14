@@ -1,70 +1,142 @@
-import React, { useState } from "react";
-import { Radio, Button, Typography } from "antd";
+import React, { useState, useEffect } from "react";
+import { Radio, Button, Typography, Spin, message } from "antd";
 import PageLayout from "@/components/Page/PageLayout";
 import styles from "@/style/Page.module.css";
 import { useNavigate } from "react-router-dom";
+import { fetchPHQ9, submitPHQ9 } from "@/api/services/testAPI";
 
 const { Title } = Typography;
 
-const Test = () => {
+const TestPHQ9 = () => {
   const navigate = useNavigate();
-  const [value, setValue] = useState(null);
+  const [questions, setQuestions] = useState([]);
+  const [scales, setScales] = useState([]);
+  const [currentQIndex, setCurrentQIndex] = useState(0);
+  const [answers, setAnswers] = useState({});
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadTest = async () => {
+      try {
+        const data = await fetchPHQ9();
+        setQuestions(data.questions || []);
+        setScales(data.scales || []);
+      } catch (error) {
+        message.error("Không thể tải bài test. Vui lòng thử lại sau.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadTest();
+  }, []);
+
+  const handleRadioChange = (e) => {
+    const questionId = questions[currentQIndex]?.id;
+    if (!questionId) return;
+    setAnswers({ ...answers, [questionId]: e.target.value });
+  };
+
+  const handleNext = async () => {
+    if (currentQIndex < questions.length - 1) {
+      setCurrentQIndex(currentQIndex + 1);
+    } else {
+      await finishTest();
+    }
+  };
+
+  const finishTest = async () => {
+    try {
+      setLoading(true);
+      const answerValues = questions.map((q) => answers[q.id] || 0);
+      const result = await submitPHQ9(answerValues);
+
+      localStorage.setItem(
+        "guest_assessment_pending",
+        JSON.stringify({
+          testCode: "PHQ9",
+          answers,
+          timestamp: new Date().toISOString(),
+        })
+      );
+
+      navigate("/result-phq9", { state: { result } });
+    } catch (error) {
+      console.error(error);
+      message.error("Có lỗi khi tính kết quả.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading)
+    return (
+      <PageLayout>
+        <div style={{ textAlign: "center", padding: 50 }}>
+          <Spin size="large" />
+        </div>
+      </PageLayout>
+    );
+
+  const currentQuestion = questions[currentQIndex];
+  const progressPercent = Math.round(
+    ((currentQIndex + 1) / questions.length) * 100
+  );
 
   return (
     <PageLayout>
       <div className={styles.testContainer}>
-        {/* Tiêu đề */}
         <Title level={2} className={styles.title}>
           Bài Test Trầm Cảm (PHQ-9)
         </Title>
         <p className={styles.subtitle}>
-          Trong 2 tuần vừa qua, bạn thường xuyên cảm thấy phiền lòng bởi những
-          vấn đề sau đây như thế nào?
+          Trong 2 tuần vừa qua, bạn cảm thấy thế nào?
         </p>
 
-        {/* Thanh tiến trình */}
         <div className={styles.progressWrapper}>
           <div className={styles.progressHeader}>
-            <span>Câu hỏi 1 trên 9</span>
-            <span>11%</span>
+            <span>
+              Câu hỏi {currentQIndex + 1} trên {questions.length}
+            </span>
+            <span>{progressPercent}%</span>
           </div>
           <div className={styles.progressBar}>
-            <div className={styles.progressFill} />
+            <div
+              className={styles.progressFill}
+              style={{ width: `${progressPercent}%` }}
+            />
           </div>
         </div>
 
-        {/* Câu hỏi */}
-        <p className={styles.questionText}>
-          Bạn có cảm thấy ít hứng thú hoặc không còn niềm vui khi làm những việc
-          thường ngày không?
-        </p>
+        <p className={styles.questionText}>{currentQuestion?.content}</p>
 
-        {/* Radio */}
         <Radio.Group
-          onChange={(e) => setValue(e.target.value)}
-          value={value}
+          onChange={handleRadioChange}
+          value={answers[currentQuestion?.id]}
           className={styles.radioGroup}
         >
-          <Radio value="not">Không bao giờ</Radio>
-          <Radio value="several">Một vài ngày</Radio>
-          <Radio value="half">Hơn nửa số ngày</Radio>
-          <Radio value="nearly">Gần như mỗi ngày</Radio>
+          {scales.map((scale) => (
+            <Radio key={scale.value} value={scale.value}>
+              {scale.label}
+            </Radio>
+          ))}
         </Radio.Group>
 
-        {/* Nút điều khiển */}
         <div className={styles.buttonGroup}>
           <Button
             className={styles.backButton}
-            onClick={() => navigate("/test-info-phq9")}
+            disabled={currentQIndex === 0}
+            onClick={() => setCurrentQIndex(currentQIndex - 1)}
           >
             Quay lại
           </Button>
           <Button
             className={styles.submitButton}
-            onClick={() => navigate("/test2-phq9")}
-            disabled={value === null}
+            onClick={handleNext}
+            disabled={answers[currentQuestion?.id] === undefined}
           >
-            Câu tiếp theo
+            {currentQIndex === questions.length - 1
+              ? "Xem kết quả"
+              : "Câu tiếp theo"}
           </Button>
         </div>
       </div>
@@ -72,4 +144,4 @@ const Test = () => {
   );
 };
 
-export default Test;
+export default TestPHQ9;

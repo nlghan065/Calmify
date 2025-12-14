@@ -1,197 +1,194 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import LayoutContainer from "@/Layout/LayoutContainer";
 import styles from "./ProfilePage.module.css";
+import { userAPI } from "@/api/user/userAPI";
+import { useNavigate } from "react-router-dom";
 
 export default function ProfilePage() {
-  // ID sinh tự động (UUID hoặc từ server)
-  const [user, setUser] = useState({
-    id: "USR20251208ABC", // ID cố định
-    nickname: "Người dùng thân thiện",
-    email: "nguyenvana@example.com",
-    joinDate: "15/01/2024",
-    age: 25,
-    gender: "Nam",
-    job: "Sinh viên",
-    phone: "0123 456 789",
-    address: "Hà Nội, Việt Nam",
-  });
+  const navigate = useNavigate();
+  const [user, setUser] = useState(null);
 
-  const [editingNick, setEditingNick] = useState(false);
-  const [tempNick, setTempNick] = useState(user.nickname);
+  // Khởi tạo là chuỗi rỗng để tránh lỗi uncontrolled input
+  const [tempNick, setTempNick] = useState("");
+  const [previewAvatar, setPreviewAvatar] = useState(null);
 
-  const saveNickname = () => {
-    setUser({ ...user, nickname: tempNick });
-    setEditingNick(false);
+  // --- LẤY URL BACKEND ---
+  const getBackendRoot = () => {
+    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+    return apiUrl.replace(/\/api$/, "");
   };
 
-  const [notifications, setNotifications] = useState({
-    daily: true,
-    weekly: true,
-    testReminder: false,
-    chatMessage: true,
-  });
+  // --- LOAD PROFILE ---
+  const loadProfile = async () => {
+    try {
+      const res = await userAPI.getMe();
+      const userData = res.data.data;
+      console.log("Check dữ liệu tải về:", userData); // Xem log để chắc chắn có nickname hay chưa
 
-  const toggle = (key) =>
-    setNotifications({ ...notifications, [key]: !notifications[key] });
+      setUser(userData);
+
+      // --- SỬA LỖI TẠI ĐÂY ---
+      // Luôn set giá trị cho tempNick, nếu null thì về chuỗi rỗng ""
+      // Điều này giúp ô input hiển thị đúng những gì đang có trong DB
+      setTempNick(userData.nickname ? userData.nickname : "");
+    } catch (err) {
+      console.error("Lỗi load profile:", err);
+      if (err.response && err.response.status === 401) {
+        navigate("/login");
+      }
+    }
+  };
+
+  useEffect(() => {
+    loadProfile();
+  }, []);
+
+  // --- LƯU NICKNAME ---
+  const saveNickname = async () => {
+    if (!tempNick.trim()) {
+      alert("Vui lòng nhập biệt danh trước khi lưu!");
+      return;
+    }
+
+    try {
+      console.log("Đang gửi nickname lên server:", tempNick);
+      await userAPI.updateNickname(user.id, tempNick);
+
+      // Load lại ngay lập tức để đồng bộ
+      await loadProfile();
+      alert("Đã lưu biệt danh thành công! ✅");
+    } catch (err) {
+      console.error(err);
+      alert("Lưu thất bại. Kiểm tra console (F12) để xem lỗi ❌");
+    }
+  };
+
+  // --- UPLOAD AVATAR ---
+  const handleAvatarChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setPreviewAvatar(URL.createObjectURL(file));
+
+    try {
+      await userAPI.updateAvatar(user.id, file);
+      setTimeout(async () => {
+        await loadProfile();
+        setPreviewAvatar(null);
+        alert("Cập nhật avatar thành công ✅");
+      }, 800);
+    } catch (err) {
+      console.error("Lỗi upload avatar:", err);
+      alert("Cập nhật avatar thất bại ❌");
+    }
+  };
+
+  // --- LẤY LINK ẢNH ---
+  const getAvatarSrc = () => {
+    if (previewAvatar) return previewAvatar;
+
+    if (user && user.avatarUrl) {
+      if (user.avatarUrl.startsWith("http")) return user.avatarUrl;
+      const cleanPath = user.avatarUrl.startsWith("/")
+        ? user.avatarUrl
+        : `/${user.avatarUrl}`;
+      return `${getBackendRoot()}${cleanPath}`;
+    }
+
+    return "https://cdn-icons-png.flaticon.com/512/3237/3237472.png";
+  };
+
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate("/");
+  };
+
+  if (!user) return <div style={{ padding: 20 }}>Đang tải thông tin...</div>;
 
   return (
     <LayoutContainer>
       <div className={styles.container}>
-        {/* ===== HEADER ===== */}
         <div className={styles.headerCard}>
           <div className={styles.profileInfo}>
-            <div className={styles.avatar}></div>
-            <div>
+            {/* AVATAR */}
+            <label className={styles.avatarWrapper}>
+              <img
+                src={getAvatarSrc()}
+                alt="avatar"
+                className={styles.avatar}
+                onError={(e) => {
+                  e.target.style.display = "none";
+                }}
+              />
+              {/* Ảnh backup phòng khi ảnh chính lỗi */}
+              <img
+                src="https://cdn-icons-png.flaticon.com/512/3237/3237472.png"
+                className={styles.avatar}
+                style={{ position: "absolute", top: 0, left: 0, zIndex: -1 }}
+              />
+
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleAvatarChange}
+                className={styles.avatarInput}
+              />
+              <div className={styles.cameraIcon}>📷</div>
+            </label>
+
+            {/* INFO - Ô NHẬP NICKNAME */}
+            <div className={styles.textInfo}>
               <div className={styles.nickRow}>
-                {editingNick ? (
-                  <>
-                    <input
-                      value={tempNick}
-                      onChange={(e) => setTempNick(e.target.value)}
-                      className={styles.nickInput}
-                    />
-                    <button onClick={saveNickname} className={styles.saveBtn}>
-                      💾
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <h2 className={styles.nickname}>{user.nickname}</h2>
-                    <button
-                      onClick={() => setEditingNick(true)}
-                      className={styles.editNickBtn}
-                    >
-                      ✏
-                    </button>
-                  </>
-                )}
+                <input
+                  type="text"
+                  placeholder="Đặt biệt danh..."
+                  value={tempNick} // Luôn binding với state
+                  onChange={(e) => setTempNick(e.target.value)}
+                  className={styles.nickInput}
+                />
+                <button
+                  onClick={saveNickname}
+                  className={styles.saveBtn}
+                  title="Lưu biệt danh"
+                >
+                  Lưu
+                </button>
               </div>
+
               <p className={styles.userID}>ID: {user.id}</p>
-              <p className={styles.email}>{user.email}</p>
-              <p className={styles.joinDate}>Tham gia từ {user.joinDate}</p>
+              <p className={styles.email}>Email: {user.email}</p>
+              <p className={styles.joinDate}>
+                Tham gia từ:{" "}
+                {user.createdAt
+                  ? new Date(user.createdAt).toLocaleDateString("vi-VN")
+                  : "..."}
+              </p>
             </div>
           </div>
         </div>
 
-        {/* ===== THÔNG TIN CÁ NHÂN ===== */}
+        {/* ... PHẦN THÔNG TIN CÁ NHÂN GIỮ NGUYÊN ... */}
         <div className={styles.section}>
           <h3 className={styles.sectionTitle}>Thông tin cá nhân</h3>
           <div className={styles.infoGrid}>
             <div>
               <label>Tuổi</label>
-              <input value={user.age} readOnly />
+              <input value={user.age || "Chưa cập nhật"} readOnly />
             </div>
             <div>
               <label>Giới tính</label>
-              <input value={user.gender} readOnly />
+              <input value={user.gender || "Chưa cập nhật"} readOnly />
             </div>
             <div>
               <label>Công việc</label>
-              <input value={user.job} readOnly />
-            </div>
-            <div>
-              <label>Số điện thoại</label>
-              <input value={user.phone} readOnly />
+              <input value={user.job || "Chưa cập nhật"} readOnly />
             </div>
           </div>
         </div>
 
-        {/* ===== NOTIFICATION SETTINGS ===== */}
-        <div className={styles.section}>
-          <h3 className={styles.sectionTitle}>Cài đặt thông báo</h3>
-
-          <div className={styles.settingRow}>
-            <div>
-              <h4>Nhắc nhở hằng ngày</h4>
-              <p>Nhận nhắc nhở ghi nhật ký mỗi ngày</p>
-            </div>
-            <label className={styles.switch}>
-              <input
-                type="checkbox"
-                checked={notifications.daily}
-                onChange={() => toggle("daily")}
-              />
-              <span className={styles.slider}></span>
-            </label>
-          </div>
-
-          <div className={styles.settingRow}>
-            <div>
-              <h4>Báo cáo tuần</h4>
-              <p>Nhận tổng kết cảm xúc hằng tuần</p>
-            </div>
-            <label className={styles.switch}>
-              <input
-                type="checkbox"
-                checked={notifications.weekly}
-                onChange={() => toggle("weekly")}
-              />
-              <span className={styles.slider}></span>
-            </label>
-          </div>
-
-          <div className={styles.settingRow}>
-            <div>
-              <h4>Nhắc làm bài test</h4>
-              <p>Nhắc nhở làm bài test định kỳ</p>
-            </div>
-            <label className={styles.switch}>
-              <input
-                type="checkbox"
-                checked={notifications.testReminder}
-                onChange={() => toggle("testReminder")}
-              />
-              <span className={styles.slider}></span>
-            </label>
-          </div>
-
-          <div className={styles.settingRow}>
-            <div>
-              <h4>Tin nhắn trò chuyện</h4>
-              <p>Thông báo khi có tin nhắn mới</p>
-            </div>
-            <label className={styles.switch}>
-              <input
-                type="checkbox"
-                checked={notifications.chatMessage}
-                onChange={() => toggle("chatMessage")}
-              />
-              <span className={styles.slider}></span>
-            </label>
-          </div>
-        </div>
-
-        {/* ===== OTHER SETTINGS ===== */}
-        <div className={styles.section}>
-          <h3 className={styles.sectionTitle}>Cài đặt khác</h3>
-
-          <div className={styles.otherSetting}>
-            <span>🔔</span>
-            <div>
-              <h4>Thông báo</h4>
-              <p>Quản lý thông báo và nhắc nhở</p>
-            </div>
-          </div>
-
-          <div className={styles.otherSetting}>
-            <span>🔒</span>
-            <div>
-              <h4>Quyền riêng tư</h4>
-              <p>Cài đặt bảo mật và quyền riêng tư</p>
-            </div>
-          </div>
-
-          <div className={styles.otherSetting}>
-            <span>⚙</span>
-            <div>
-              <h4>Cài đặt chung</h4>
-              <p>Tùy chỉnh giao diện và ngôn ngữ</p>
-            </div>
-          </div>
-        </div>
-
-        {/* LOGOUT */}
-        <button className={styles.logoutBtn}>🚪 Đăng xuất</button>
+        <button onClick={handleLogout} className={styles.logoutBtn}>
+          Đăng xuất
+        </button>
       </div>
     </LayoutContainer>
   );
