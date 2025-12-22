@@ -45,7 +45,7 @@ function App() {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/forgot" element={<ForgotPage />} />
         <Route path="/verify-otp" element={<OTPPage />} />
-        <Route path="/reset" element={<ResetPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/chat" element={<ChatAI />} />
 
         <Route path="/test-info-phq9" element={<TestInfoPHQ9 />} />
@@ -59,10 +59,12 @@ function App() {
 
         <Route path="/emotional" element={<EmotionDiary />} />
         <Route path="/statistics" element={<StatisticsPage />} />
+
         <Route path="/methods" element={<MethodsPage />} />
         <Route path="/detail/:methodId" element={<MethodDetailPage />} />
         <Route path="/lesson/:lessonId" element={<LessonDetailPage />} />
         <Route path="/hotline" element={<SupportCentersPage />} />
+
         <Route path="/profile" element={<ProfilePage />} />
       </Routes>
 

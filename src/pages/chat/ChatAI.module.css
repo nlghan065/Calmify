@@ -1,56 +1,200 @@
 /* ChatAI.module.css */
 
-/* ==== CONTAINER FULL (KHÔNG SCROLL TOÀN PAGE) ==== */
-.container {
+/* 🆕 WRAPPER CHÍNH: Giữ Sidebar và Chat Container nằm ngang */
+.wrapper {
   display: flex;
-  flex-direction: column;
-
-  height: 97%;
   width: 100%;
-
-  overflow: hidden; /* ✅ CHẶN SCROLL TOÀN TRANG CHAT */
-
-  box-sizing: border-box;
+  height: 95%; /* Chiều cao khớp với layout */
+  overflow: hidden;
+  position: relative;
+  gap: 10px; /* Khoảng cách giữa sidebar và chat */
 }
 
-/* ==== KHUNG CHAT (VÙNG DUY NHẤT ĐƯỢC SCROLL) ==== */
+/* 🆕 SIDEBAR STYLES */
+.sidebar {
+  background-color: #f9fafb; /* Màu nền nhẹ */
+  border-right: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease-in-out; /* Hiệu ứng trượt mượt mà */
+  overflow: hidden;
+  border-radius: 16px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
+}
+
+/* Trạng thái mở/đóng */
+.sidebar.open {
+  width: 280px; /* Độ rộng khi mở */
+  opacity: 1;
+  padding: 16px;
+}
+
+.sidebar.closed {
+  width: 0; /* Thu lại hoàn toàn */
+  opacity: 0;
+  padding: 0;
+  border: none;
+}
+
+.sidebarHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.sidebarHeader h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #333;
+}
+
+.newChatBtn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  background-color: #4f80ff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.sessionList {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Scrollbar cho list */
+.sessionList::-webkit-scrollbar {
+  width: 4px;
+}
+.sessionList::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+
+.sessionItem {
+  padding: 10px;
+  background: white;
+  border-radius: 10px;
+  cursor: pointer;
+  border: 1px solid #eee;
+  transition: background 0.2s;
+}
+
+.sessionItem:hover {
+  background-color: #eef2ff;
+}
+
+.activeSession {
+  background-color: #e0e7ff; /* Màu highlight khi đang chọn */
+  border-color: #4f80ff;
+}
+
+.sessionItem p {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: #444;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* Cắt chữ nếu quá dài */
+}
+
+.sessionDate {
+  font-size: 11px;
+  color: #888;
+}
+
+.emptyText {
+  text-align: center;
+  font-size: 13px;
+  color: #999;
+  margin-top: 20px;
+}
+
+/* 🆕 NÚT MỞ SIDEBAR (Hiện khi sidebar đóng) */
+.toggleButton {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  z-index: 20;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 6px;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  color: #555;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toggleButton:hover {
+  background-color: #f3f4f6;
+}
+
+/* ==== CONTAINER CHAT (SỬA LẠI ĐỂ FLEX VỚI SIDEBAR) ==== */
+.container {
+  flex: 1; /* Chiếm hết không gian còn lại */
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  margin: 0; /* Bỏ margin cũ vì đã có gap ở wrapper */
+  padding: 0;
+  overflow: hidden;
+  box-sizing: border-box;
+  position: relative;
+  background-color: white; /* Đảm bảo nền trắng */
+  border-radius: 16px;
+}
+
+/* ==== KHUNG CHAT ==== */
 .chatBox {
   flex: 1;
   padding: 20px;
-  border-radius: 16px 16px -10px 0;
+  /* Nếu có nút toggle đè lên thì cần padding top lớn hơn chút */
+  padding-top: 50px;
 
-  overflow-y: auto; /* ✅ CHỈ KHUNG NÀY SCROLL */
+  overflow-y: auto;
   overflow-x: hidden;
-
-  min-height: 0; /* ✅ BẮT BUỘC ĐỂ FLEX SCROLL */
-
+  min-height: 0;
   display: flex;
   flex-direction: column;
   gap: 16px;
   box-sizing: border-box;
-
   scroll-behavior: smooth;
+  padding-bottom: 20px;
 }
 
-/* ==== CUSTOM SCROLLBAR ==== */
+/* Khi sidebar mở thì không cần padding top lớn vì nút toggle ẩn */
+.sidebar.open + .container .chatBox {
+  padding-top: 20px;
+}
+
+/* ... GIỮ NGUYÊN CÁC STYLE SCROLLBAR, MESSAGE, INPUT CŨ CỦA BẠN ... */
+
 .chatBox::-webkit-scrollbar {
   width: 6px;
 }
-
 .chatBox::-webkit-scrollbar-track {
   background: transparent;
 }
-
 .chatBox::-webkit-scrollbar-thumb {
   background-color: #c1c1c1;
   border-radius: 10px;
 }
-
 .chatBox::-webkit-scrollbar-thumb:hover {
   background-color: #a8a8a8;
 }
 
-/* ==== TIN NHẮN ==== */
 .userMessage,
 .botMessage {
   max-width: 80%;
@@ -64,33 +208,32 @@
   animation: fadeIn 0.2s ease;
 }
 
-/* Tin người dùng */
 .userMessage {
   align-self: flex-end;
   background: #4f80ff;
   color: #fff;
   border-radius: 16px 16px 0 16px;
 }
-
-/* Tin bot */
 .botMessage {
   align-self: flex-start;
-  background: #ffffff;
+  background: #f3f4f6;
   color: #222;
   border-radius: 16px 16px 16px 0;
 }
 
-/* ==== INPUT AREA (CỐ ĐỊNH DƯỚI) ==== */
+/* INPUT AREA */
 .inputArea {
   display: flex;
   gap: 10px;
   width: 100%;
-  padding: 8px 12px;
-
-  flex-shrink: 0; /* ✅ KHÔNG BỊ CO KHI CHAT DÀI */
-
+  padding: 15px;
+  flex-shrink: 0;
+  border-radius: 15px; /* Bo góc dưới nếu cần */
   box-sizing: border-box;
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+  background-color: #ffffff;
+  z-index: 10;
+  border-top: 1px solid #e5e7eb;
 }
 
 .inputArea input {
@@ -100,7 +243,6 @@
   border: 1px solid #d1d5db;
   outline: none;
 }
-
 .inputArea button {
   padding: 14px 24px;
   background: #4f80ff;
@@ -111,7 +253,6 @@
   cursor: pointer;
 }
 
-/* ===== Animation ===== */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -122,16 +263,12 @@
     transform: translateY(0);
   }
 }
-
-/* ==== NGÀY Ở ĐẦU CHAT ==== */
 .chatDate {
   text-align: center;
   font-size: 12px;
   color: #888;
   margin-bottom: 12px;
 }
-
-/* ==== GIỜ NHỎ DƯỚI TIN NHẮN ==== */
 .time {
   display: block;
   font-size: 10px;
@@ -139,8 +276,248 @@
   margin-top: 4px;
   text-align: right;
 }
-
-/* Chỉnh căn giờ cho tin bot */
 .botMessage .time {
   text-align: left;
+}
+/* WRAPPER CHÍNH */
+.wrapper {
+  display: flex;
+  width: 100%;
+  height: 95%;
+  gap: 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* SIDEBAR */
+.sidebar {
+  background-color: #f9fafb;
+  border-right: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  border-radius: 16px;
+  white-space: nowrap; /* Giúp nội dung không bị vỡ khi thu nhỏ */
+}
+
+.sidebar.open {
+  width: 280px;
+  padding: 16px;
+  opacity: 1;
+}
+.sidebar.closed {
+  width: 0;
+  padding: 0;
+  opacity: 0;
+  border: none;
+}
+
+.sidebarHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.sidebarHeader h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #333;
+}
+
+.newChatBtn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  background-color: #4f80ff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.sessionList {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.sessionList::-webkit-scrollbar {
+  width: 4px;
+}
+.sessionList::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+
+.sessionItem {
+  padding: 10px;
+  background: white;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.sessionItem:hover {
+  background-color: #eef2ff;
+}
+.activeSession {
+  background-color: #e0e7ff;
+  border-color: #4f80ff;
+}
+
+.sessionItem p {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: #444;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sessionDate {
+  font-size: 11px;
+  color: #888;
+}
+.emptyText {
+  font-size: 13px;
+  color: #999;
+  text-align: center;
+  margin-top: 20px;
+}
+
+/* MAIN CHAT CONTAINER */
+.container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: white;
+  border-radius: 16px;
+  position: relative;
+}
+
+/* NÚT TOGGLE SIDEBAR */
+.toggleButton {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  z-index: 20;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 6px;
+  cursor: pointer;
+  color: #555;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+.toggleButton:hover {
+  background-color: #f3f4f6;
+}
+
+/* KHUNG CHAT */
+.chatBox {
+  flex: 1;
+  padding: 20px;
+  /* Nếu sidebar đóng (hiện nút toggle) thì padding top cần dày hơn */
+  padding-top: 50px;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+/* Nếu sidebar mở (ẩn nút toggle) thì padding top bình thường */
+.sidebar.open + .container .chatBox {
+  padding-top: 20px;
+}
+
+.chatBox::-webkit-scrollbar {
+  width: 6px;
+}
+.chatBox::-webkit-scrollbar-thumb {
+  background-color: #c1c1c1;
+  border-radius: 10px;
+}
+
+/* TIN NHẮN */
+.userMessage,
+.botMessage {
+  max-width: 80%;
+  padding: 12px 18px;
+  font-size: 16px;
+  line-height: 1.5;
+  border-radius: 16px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  animation: fadeIn 0.2s ease;
+}
+.userMessage {
+  align-self: flex-end;
+  background: #4f80ff;
+  color: #fff;
+  border-radius: 16px 16px 0 16px;
+}
+.botMessage {
+  align-self: flex-start;
+  background: #f3f4f6;
+  color: #222;
+  border-radius: 16px 16px 16px 0;
+}
+
+.messageText {
+  display: block;
+}
+.time {
+  display: block;
+  font-size: 10px;
+  opacity: 0.7;
+  margin-top: 4px;
+  text-align: right;
+}
+.botMessage .time {
+  text-align: left;
+}
+
+/* INPUT AREA */
+.inputArea {
+  display: flex;
+  gap: 10px;
+  padding: 15px;
+  background-color: white;
+  border-top: 1px solid #e5e7eb;
+  border-radius: 0 0 16px 16px;
+}
+.inputArea input {
+  flex: 1;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid #d1d5db;
+  outline: none;
+}
+.inputArea button {
+  padding: 14px 24px;
+  background: #4f80ff;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.inputArea button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

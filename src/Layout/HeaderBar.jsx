@@ -22,38 +22,56 @@ export default function HeaderBar() {
     return apiUrl.replace(/\/api$/, "");
   };
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      // --- FIX LỖI 401 ---
-      // Kiểm tra xem có token không. Nếu không có (chưa đăng nhập) thì dừng luôn.
-      const token = localStorage.getItem("token");
-      if (!token) return;
+  // Hàm này tách ra để có thể gọi lại bất cứ lúc nào
 
-      try {
-        const res = await userAPI.getMe();
-        const user = res.data.data;
-        if (user) {
-          if (user.nickname) setDisplayName(user.nickname);
-          if (user.avatarUrl) {
-            let finalUrl = user.avatarUrl;
-            if (!finalUrl.startsWith("http")) {
-              const cleanPath = finalUrl.startsWith("/")
-                ? finalUrl
-                : `/${finalUrl}`;
-              finalUrl = `${getBackendRoot()}${cleanPath}`;
-            }
-            setAvatarUrl(finalUrl);
+  const fetchUserData = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    try {
+      const res = await userAPI.getMe();
+      const user = res.data.data;
+      if (user) {
+        // --- SỬA ĐOẠN NÀY ---
+        // Nếu có nickname thì hiện, nếu user xóa nickname (null/empty) thì hiện "bạn"
+        setDisplayName(user.nickname || "bạn");
+        // --------------------
+
+        if (user.avatarUrl) {
+          let finalUrl = user.avatarUrl;
+          if (!finalUrl.startsWith("http")) {
+            const cleanPath = finalUrl.startsWith("/")
+              ? finalUrl
+              : `/${finalUrl}`;
+            finalUrl = `${getBackendRoot()}${cleanPath}`;
           }
+          // Thêm timestamp để ép trình duyệt load ảnh mới nhất
+          setAvatarUrl(`${finalUrl}?t=${new Date().getTime()}`);
         }
-      } catch (err) {
-        // Lỗi này thường do token hết hạn, không cần log đỏ lòm làm rối mắt
-        // console.error("Header: Không tải được thông tin user");
       }
-    };
-    fetchUserData();
-  }, []); // Chạy 1 lần khi mount
+    } catch (err) {
+      // Silent error
+    }
+  };
 
-  // Đóng menu khi click ra ngoài
+  useEffect(() => {
+    // 1. Gọi lần đầu khi component mount
+    fetchUserData();
+
+    // 2. Lắng nghe sự kiện "user-update" từ các nơi khác (như trang Profile)
+    const handleUserUpdate = () => {
+      fetchUserData();
+    };
+
+    window.addEventListener("user-update", handleUserUpdate);
+
+    // 3. Dọn dẹp sự kiện khi component bị hủy
+    return () => {
+      window.removeEventListener("user-update", handleUserUpdate);
+    };
+  }, []);
+
+  // ... (Phần code xử lý click outside và logout giữ nguyên) ...
   useEffect(() => {
     function handleClickOutside(event) {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -65,14 +83,15 @@ export default function HeaderBar() {
   }, []);
 
   const handleLogout = () => {
-    localStorage.clear(); // Xóa token
-    setAvatarUrl(null); // Reset state
+    localStorage.clear();
+    setAvatarUrl(null);
     setDisplayName("bạn");
-    navigate("/login"); // Chuyển trang
+    navigate("/login");
   };
 
   return (
     <header className={styles.header}>
+      {/* ... Phần JSX hiển thị giữ nguyên ... */}
       <div>
         <h2 style={{ textTransform: "capitalize" }}>
           Chào mừng {displayName} trở lại!
@@ -81,7 +100,6 @@ export default function HeaderBar() {
       </div>
 
       <div className={styles.profileContainer} ref={menuRef}>
-        {/* Avatar Trigger */}
         <div onClick={() => setIsOpen(!isOpen)} title="Tài khoản">
           {avatarUrl ? (
             <img
@@ -98,7 +116,6 @@ export default function HeaderBar() {
           )}
         </div>
 
-        {/* Dropdown Menu */}
         {isOpen && (
           <div className={styles.dropdownMenu}>
             <div

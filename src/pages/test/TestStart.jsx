@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Radio, Button, Typography, Progress, Spin, message } from "antd";
 import LayoutContainer from "@/Layout/LayoutContainer";
 import styles from "@/style/Test.module.css";
@@ -8,77 +8,83 @@ import { fetchQuestionsByTestCode } from "@/api/test/testAPI";
 const { Title } = Typography;
 
 const TestStart = () => {
-  const { id } = useParams();
+  const { id } = useParams(); // id ở đây chính là mã bài test (VD: PHQ9)
   const navigate = useNavigate();
+
   const [questions, setQuestions] = useState([]);
+  const [answerOptions, setAnswerOptions] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchQuestions = async () => {
+    const loadData = async () => {
       try {
         setLoading(true);
-        const data = await fetchQuestionsByTestCode(id);
-        if (data.success && data.data.questions.length > 0)
-          setQuestions(data.data.questions);
-        else message.error("Bộ câu hỏi này chưa có dữ liệu trong DB!");
-      } catch {
-        message.error("Không thể kết nối đến Server.");
+        // Gọi API lấy câu hỏi
+        const res = await fetchQuestionsByTestCode(id);
+
+        if (res.success && res.data) {
+          const { questions: qs } = res.data;
+          setQuestions(qs || []);
+
+          // Lấy options từ câu hỏi đầu tiên (vì BE đã gán options vào từng câu)
+          if (qs && qs.length > 0 && qs[0].options) {
+            const ops = qs[0].options.map((opt) => ({
+              label: opt.optionText,
+              value: opt.score,
+            }));
+            setAnswerOptions(ops);
+          }
+        } else {
+          message.error("Không tìm thấy bài test này!");
+        }
+      } catch (error) {
+        console.error(error);
+        message.error("Lỗi kết nối server.");
       } finally {
         setLoading(false);
       }
     };
-    if (id) fetchQuestions();
+
+    if (id) loadData();
   }, [id]);
 
   const handleSelect = (e) => {
-    const value = e.target.value;
-    const questionId = questions[currentIndex].id;
+    const score = e.target.value;
+    const currentQId = questions[currentIndex].id;
 
-    // Lưu đáp án
-    setAnswers((prev) => ({
-      ...prev,
-      [questionId]: value,
-    }));
+    // Lưu điểm số cho câu hỏi này
+    setAnswers((prev) => ({ ...prev, [currentQId]: score }));
 
-    // Chuyển câu tiếp theo
+    // Chuyển câu hoặc kết thúc
     if (currentIndex < questions.length - 1) {
       setCurrentIndex(currentIndex + 1);
     } else {
-      // Nếu là câu cuối cùng, chuyển sang trang kết quả
+      // Khi làm xong, chuyển sang trang kết quả
+      // Tính sơ bộ tổng điểm để hiện ngay (Backend sẽ tính lại để lưu)
+      const currentAnswers = { ...answers, [currentQId]: score };
+      const totalScore = Object.values(currentAnswers).reduce(
+        (a, b) => a + b,
+        0
+      );
+
       navigate(`/result/${id}`, {
-        state: {
-          score: Object.values({ ...answers, [questionId]: value }).reduce(
-            (a, b) => a + b,
-            0
-          ),
-          answers: { ...answers, [questionId]: value },
-        },
+        state: { score: totalScore, answers: currentAnswers },
       });
     }
   };
 
-  const handleBack = () =>
-    currentIndex > 0
-      ? setCurrentIndex(currentIndex - 1)
-      : navigate(`/test-info/${id}`);
+  const handleBack = () => {
+    if (currentIndex > 0) setCurrentIndex(currentIndex - 1);
+    else navigate(`/test-info/${id}`);
+  };
 
   if (loading)
     return (
       <div className={styles.loadingBox}>
         <Spin size="large" />
       </div>
-    );
-
-  if (questions.length === 0)
-    return (
-      <LayoutContainer>
-        <div className={styles.loadingBox}>
-          <h3>Chưa có câu hỏi trong Database</h3>
-          <Button onClick={() => navigate("/category")}>Quay lại</Button>
-        </div>
-      </LayoutContainer>
     );
 
   const currentQuestion = questions[currentIndex];
@@ -89,38 +95,43 @@ const TestStart = () => {
   return (
     <LayoutContainer>
       <div className={styles.testContainer}>
-        <Title level={3} className={styles.titleCenter}>
-          Bài Test {id}
+        <Title level={3} style={{ textAlign: "center" }}>
+          Bài Test: {id}
         </Title>
-        <Progress percent={progressPercent} status="active" showInfo={false} />
-        <div className={styles.progressText}>{progressPercent}%</div>
 
-        <div className={styles.questionBox}>
-          <p className={styles.subtitle}>
-            <strong>
-              Câu {currentIndex + 1}/{questions.length}:
-            </strong>{" "}
-            {currentQuestion?.content}
-          </p>
-          <Radio.Group
-            onChange={handleSelect}
-            value={answers[currentQuestion?.id]}
-            className={styles.radioGroup}
-          >
-            <Radio value={0}>Không bao giờ (0 điểm)</Radio>
-            <Radio value={1}>Thỉnh thoảng (1 điểm)</Radio>
-            <Radio value={2}>Thường xuyên (2 điểm)</Radio>
-            <Radio value={3}>Luôn luôn (3 điểm)</Radio>
-          </Radio.Group>
+        <Progress percent={progressPercent} status="active" showInfo={false} />
+        <div style={{ textAlign: "right", marginBottom: 40 }}>
+          {progressPercent}%
         </div>
 
+        {currentQuestion && (
+          <div>
+            <p className={styles.subtitle}>
+              <strong>Câu {currentIndex + 1}:</strong>{" "}
+              {currentQuestion.questionText}
+            </p>
+
+            <Radio.Group
+              onChange={handleSelect}
+              value={answers[currentQuestion.id]}
+              className={styles.radioGroup}
+            >
+              {answerOptions.map((opt, idx) => (
+                <Radio
+                  key={idx}
+                  value={opt.value}
+                  style={{ display: "flex", marginBottom: 10 }}
+                >
+                  {opt.label}
+                </Radio>
+              ))}
+            </Radio.Group>
+          </div>
+        )}
+
         <div className={styles.buttonGroup}>
-          <Button
-            className={styles.backButton}
-            onClick={handleBack}
-            size="large"
-          >
-            {currentIndex === 0 ? "Hủy bỏ" : "Quay lại"}
+          <Button onClick={handleBack} size="large">
+            {currentIndex === 0 ? "Hủy" : "Quay lại"}
           </Button>
         </div>
       </div>

@@ -1,14 +1,16 @@
 import axios from "axios";
 
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+// Đảm bảo VITE_API_URL là http://localhost:5000/api
+const BASE_URL = import.meta.env.VITE_API_URL;
 
 export const exerciseAPI = {
-  // Lấy danh sách category
-  getCategories: () => axios.get(`${BASE_URL}/exercise-categories`),
+  // GET /api/exercises/categories
+  getCategories: () => axios.get(`${BASE_URL}/exercises/categories`),
 
-  // Lấy chi tiết 1 category kèm exercises
-  getCategoryDetail: (id) => axios.get(`${BASE_URL}/exercise-categories/${id}`),
+  // GET /api/exercises/categories/:id
+  getCategoryDetail: (id) =>
+    axios.get(`${BASE_URL}/exercises/categories/${id}`),
 
-  // Lấy chi tiết 1 bài tập
+  // GET /api/exercises/:id
   getExerciseDetail: (id) => axios.get(`${BASE_URL}/exercises/${id}`),
 };

@@ -1,3 +1,4 @@
+// src/Layout/Sidebar.jsx
 import React, { useState } from "react";
 import styles from "./Layout.module.css";
 import logoImg from "@/assets/images/logo.png";
@@ -13,73 +14,71 @@ import {
   PhoneOutlined,
   BarChartOutlined,
   UserOutlined,
-  MenuOutlined, // <-- đảm bảo có import này để tránh ReferenceError
+  MenuOutlined,
 } from "@ant-design/icons";
+
+// ❌ Đã xóa import getChatSessions vì logic này đã chuyển sang ChatAI.jsx
 
 export default function Sidebar() {
   const navigate = useNavigate();
   const location = useLocation();
-
   const [collapsed, setCollapsed] = useState(false);
 
-  const isActive = (path) => location.pathname === path;
+  // ❌ Đã xóa state sessions, isChatExpanded để tránh xung đột giao diện
+
+  const handleMenuClick = (item) => {
+    navigate(item.path);
+  };
 
   const menuItems = [
     { icon: <HomeOutlined />, label: "Trang chủ", path: "/home" },
     { icon: <ProfileOutlined />, label: "Bài test", path: "/category" },
     { icon: <ReadOutlined />, label: "Nhật ký cảm xúc", path: "/emotional" },
-    { icon: <CommentOutlined />, label: "Trò chuyện", path: "/chat" },
+    { icon: <CommentOutlined />, label: "Trò chuyện", path: "/chat" }, // Khi bấm vào đây, ChatAI.jsx sẽ lo phần hiển thị lịch sử
     { icon: <BulbOutlined />, label: "Các phương pháp", path: "/methods" },
     {
       icon: <PhoneOutlined />,
       label: "Hotline / địa chỉ uy tín",
       path: "/hotline",
     },
-
-    // giữ nguyên icon thống kê như yêu cầu
     { icon: <BarChartOutlined />, label: "Thống kê", path: "/statistics" },
-
     { icon: <UserOutlined />, label: "Tôi", path: "/profile" },
   ];
 
   return (
     <aside className={`${styles.sidebar} ${collapsed ? styles.collapsed : ""}`}>
-      {/* ==== Logo + Toggle ==== */}
       <div className={styles.topBar}>
         <img
           src={collapsed ? logoMini : logoImg}
           alt="logo"
           className={styles.logo}
-          onClick={() => {
-            if (collapsed) {
-              setCollapsed(false);
-            } else {
-              navigate("/home");
-            }
-          }}
-          style={{ cursor: "pointer" }}
+          onClick={() => navigate("/home")}
         />
-
-        {/* Toggle button */}
         <MenuOutlined
           className={styles.menuToggle}
           onClick={() => setCollapsed(!collapsed)}
         />
       </div>
 
-      {/* ==== Menu ==== */}
       <nav className={styles.nav}>
         <ul>
-          {menuItems.map((item) => (
-            <li
-              key={item.path}
-              className={isActive(item.path) ? styles.active : ""}
-              onClick={() => navigate(item.path)}
-            >
-              {item.icon}
-              {!collapsed && <span className={styles.label}>{item.label}</span>}
-            </li>
-          ))}
+          {menuItems.map((item) => {
+            // Kiểm tra active dựa trên path hiện tại
+            const isActive = location.pathname.startsWith(item.path);
+
+            return (
+              <li
+                key={item.path}
+                className={isActive ? styles.active : ""} // Bạn nhớ thêm class active trong CSS nếu chưa có
+                onClick={() => handleMenuClick(item)}
+              >
+                {item.icon}
+                {!collapsed && (
+                  <span className={styles.label}>{item.label}</span>
+                )}
+              </li>
+            );
+          })}
         </ul>
       </nav>
     </aside>

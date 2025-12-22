@@ -1,8 +1,9 @@
 /* ================= Container ================= */
+
 .container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
+  padding: 1px 0 20px 0;
+  max-width: 1200px;
+  margin: -10px auto;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
@@ -50,45 +51,61 @@
 }
 
 /* ================= Emotion Buttons ================= */
+/* Container chọn cảm xúc */
 .emotionButtons {
   display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 16px;
+  justify-content: center;
+  gap: 50px;
+  margin: 20px 0;
 }
-
 .emotionBtn {
+  font-size: 40px; /* icon to */
+  background: transparent; /* bỏ nền */
+  border: 2px solid #d0d8f7; /* khung */
+  padding: 10px;
+  border-radius: 16px; /* bo tròn */
+  cursor: pointer;
+  width: 75px;
+  height: 75px;
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 12px;
-  background-color: #fff;
-  border: 2px solid #ddd;
-  border-radius: 12px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: all 0.2s;
+  justify-content: center;
+  transition: 0.2s ease;
 }
 
 .emotionBtn:hover {
-  border-color: #2a4d9e;
+  border-color: #4f80ff;
+  transform: translateY(-3px);
 }
 
 .activeEmotion {
-  border-color: #2a4d9e;
-  background-color: #e0e7ff;
+  border: 3px solid #4f80ff; /* khung khi chọn */
+  background: #eef3ff; /* nhẹ thôi */
+  transform: scale(1.1);
+  box-shadow: 0 4px 10px rgba(79, 128, 255, 0.3);
 }
 
-/* ================= Textarea ================= */
-.textarea {
-  width: 100%;
-  min-height: 80px;
-  padding: 10px;
-  border-radius: 12px;
-  border: 1px solid #ccc;
-  resize: vertical;
-  margin-bottom: 16px;
-  font-size: 16px;
+textarea {
+  width: 98%;
+  border-radius: 10px;
+  border: 1px solid #dce3f3;
+  padding: 8px 10px;
+  resize: none;
+  min-height: 50px; /* nhỏ hơn trước */
+  margin-top: 10px;
+  margin-bottom: 14px;
+  background: #fafbff;
+  font-family: inherit;
+  font-size: 14px;
+  color: #333;
+  transition: all 0.2s ease;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: #1e63ff;
+  background: #fff;
+  box-shadow: 0 0 0 2px rgba(30, 99, 255, 0.1);
 }
 
 /* ================= Actions ================= */
@@ -126,11 +143,6 @@
 }
 
 /* ================= List / Cards ================= */
-.list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
 
 .card {
   display: flex;
@@ -140,6 +152,20 @@
   border-radius: 16px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
   align-items: flex-start;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px; /* cách biệt giữa các ngày */
+}
+
+.dateGroup {
+  border-top: 1px solid #e0e0e0;
+  padding-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px; /* khoảng cách giữa các card trong ngày */
 }
 
 .icon {

@@ -1,7 +1,7 @@
 import React from "react";
-import { Input, Button, Typography } from "antd";
+import { Input, Button, Typography, message } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
-import styles from "../../style/Auth.module.css";
+import styles from "../../style/Auth.module.css"; // Hãy đảm bảo đường dẫn CSS đúng
 import AuthLayout from "../../components/Auth/AuthLayout";
 import { authAPI } from "@/api/auth/authAPI";
 import { useNavigate } from "react-router-dom";
@@ -9,7 +9,9 @@ import { toast } from "react-toastify";
 import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { mergeGuestAssessment } from "@/api/services/assessmentAPI";
+
+// Import API nộp bài test (Lưu ý đường dẫn file này trong dự án của bạn)
+import { submitPHQ9Answers } from "@/api/test/phq9Api";
 
 const { Title, Paragraph } = Typography;
 const AntdLink = Typography.Link;
@@ -37,33 +39,56 @@ const LoginPage = () => {
     mode: "onChange",
   });
 
+  // --- HÀM XỬ LÝ SUBMIT LOGIN ---
   const onSubmit = async (values) => {
     try {
       setLoading(true);
 
-      // 1️⃣ Login
+      // 1. Dọn dẹp token/user cũ trước khi login mới
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+
+      // 2. Gọi API Login
       const res = await authAPI.login(values);
+      const token = res.data?.token;
+      const user = res.data?.user;
+
+      if (!token) throw new Error("Không lấy được token xác thực");
+
+      // 3. Lưu thông tin đăng nhập mới vào LocalStorage
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+
       toast.success(res.data.message || "Đăng nhập thành công! 🌿");
 
-      const { token, user } = res.data.data;
-      if (token) {
-        localStorage.setItem("token", token);
-        localStorage.setItem("user", JSON.stringify(user));
-      }
+      // 4. XỬ LÝ BÀI TEST TẠM
+      const pendingTest = localStorage.getItem("pendingTestSubmission");
 
-      // 2️⃣ Merge guest assessment nếu có
-      try {
-        const merged = await mergeGuestAssessment(token, user.id);
-        if (merged) {
-          toast.success("Kết quả bài test vừa làm đã được lưu vào hồ sơ! 📝");
+      if (pendingTest) {
+        try {
+          const parsedTestPayload = JSON.parse(pendingTest);
+
+          const submitRes = await submitPHQ9Answers(parsedTestPayload, token);
+
+          if (submitRes && submitRes.success) {
+            toast.info("Kết quả bài test vừa làm đã được lưu lại!");
+            localStorage.removeItem("pendingTestSubmission");
+          }
+        } catch (submitError) {
+          console.error("Lỗi lưu bài test khách:", submitError);
+          toast.warning(
+            "Đăng nhập thành công nhưng chưa lưu được kết quả test cũ."
+          );
         }
-      } catch (err) {
-        console.error("❌ Lỗi merge guest assessment:", err);
       }
 
+      // 5. Chuyển thẳng về trang Home
       navigate("/home");
     } catch (err) {
-      toast.error(err.response?.data?.message || "Sai thông tin đăng nhập!");
+      console.error("Login Error:", err);
+      toast.error(
+        err.response?.data?.message || err.message || "Sai thông tin đăng nhập!"
+      );
     } finally {
       setLoading(false);
     }
@@ -80,7 +105,7 @@ const LoginPage = () => {
         </Paragraph>
 
         <form onSubmit={handleSubmit(onSubmit)}>
-          {/* Email */}
+          {/* Email Input */}
           <label className={styles.label}>
             <span className={styles.required}>*</span> Email
           </label>
@@ -100,7 +125,7 @@ const LoginPage = () => {
             <p className={styles.error}>{errors.email.message}</p>
           )}
 
-          {/* Password */}
+          {/* Password Input */}
           <div style={{ marginTop: 12 }}>
             <label className={styles.label}>
               <span className={styles.required}>*</span> Mật khẩu

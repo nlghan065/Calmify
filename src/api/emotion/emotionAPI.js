@@ -1,40 +1,47 @@
 const BASE_URL = import.meta.env.VITE_API_URL;
 
+// Hàm lấy headers chung (cho gọn code)
+const getHeaders = () => {
+  const token = localStorage.getItem("token");
+  return {
+    "Content-Type": "application/json",
+    Authorization: token ? `Bearer ${token}` : "",
+  };
+};
+
+// Hàm lấy User ID an toàn
+const getUserId = () => {
+  const userStr = localStorage.getItem("user");
+  if (!userStr) return null;
+  try {
+    const user = JSON.parse(userStr);
+    return user.id;
+  } catch (e) {
+    return null;
+  }
+};
+
 /**
  * Gửi cảm xúc hôm nay (Dashboard)
- * @param {Object} data - { mood, note }
  */
 export const checkTodayEmotion = async (data) => {
   try {
-    console.log("[API] Sending checkTodayEmotion data:", data);
+    const userId = getUserId();
+    if (!userId) throw new Error("User not found in local storage");
 
-    const token = localStorage.getItem("token");
-    const user = JSON.parse(localStorage.getItem("user"));
-
-    console.log("[API] Retrieved token:", token);
-    const res = await fetch(`${BASE_URL}/emotions/${user.id}`, {
-      // bỏ /check
+    const res = await fetch(`${BASE_URL}/emotions/${userId}`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: token ? `Bearer ${token}` : "",
-      },
-      credentials: "include",
+      headers: getHeaders(),
       body: JSON.stringify(data),
     });
 
     if (!res.ok) {
       const errorBody = await res.text();
-      console.error(
-        `[API] checkTodayEmotion failed with status ${res.status}:`,
-        errorBody
-      );
+      console.error(`[API] checkTodayEmotion failed:`, errorBody);
       throw new Error("Failed to check today emotion");
     }
 
-    const result = await res.json();
-    console.log("[API] checkTodayEmotion success:", result);
-    return result;
+    return await res.json();
   } catch (err) {
     console.error("[API] checkTodayEmotion error:", err);
     throw err;
@@ -43,20 +50,16 @@ export const checkTodayEmotion = async (data) => {
 
 /**
  * Lưu nhật ký cảm xúc (Diary)
- * @param {Object} data - { mood, note }
  */
 export const createDiaryNote = async (data) => {
-  const token = localStorage.getItem("token");
-  const user = JSON.parse(localStorage.getItem("user"));
+  const userId = getUserId();
+  if (!userId) throw new Error("User not found");
+
   try {
-    const res = await fetch(`${BASE_URL}/emotions/${user.id}`, {
+    const res = await fetch(`${BASE_URL}/emotions/${userId}`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: token ? `Bearer ${token}` : "",
-      },
-      credentials: "include",
-      body: JSON.stringify(data), // chỉ gửi { mood, note }
+      headers: getHeaders(), // Đã có Token
+      body: JSON.stringify(data),
     });
 
     if (!res.ok) throw new Error("Failed to create diary note");
@@ -69,15 +72,15 @@ export const createDiaryNote = async (data) => {
 
 /**
  * Lấy danh sách nhật ký cảm xúc
- * @returns Array [{ mood, note, createdAt }]
  */
 export const getDiaryNotes = async () => {
-  const token = localStorage.getItem("token");
-  const user = JSON.parse(localStorage.getItem("user"));
+  const userId = getUserId();
+  if (!userId) throw new Error("User not found");
 
   try {
-    const res = await fetch(`${BASE_URL}/emotions/${user.id}`, {
+    const res = await fetch(`${BASE_URL}/emotions/${userId}`, {
       method: "GET",
+      headers: getHeaders(), // <--- QUAN TRỌNG: Phải thêm dòng này để gửi Token
     });
 
     if (!res.ok) throw new Error("Failed to load diary notes");

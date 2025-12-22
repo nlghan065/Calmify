@@ -11,12 +11,14 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 
 const { Title, Paragraph } = Typography;
+const AntdLink = Typography.Link; // Dùng Link của Antd cho đẹp
 
 const schema = yup.object().shape({
   otp: yup
     .string()
     .required("Vui lòng nhập mã OTP.")
-    .length(6, "OTP phải gồm 6 số"),
+    .length(6, "OTP phải gồm 6 số")
+    .matches(/^[0-9]+$/, "OTP chỉ được chứa số"), // Thêm check chỉ số
 });
 
 const OTPPage = () => {
@@ -24,6 +26,7 @@ const OTPPage = () => {
   const [searchParams] = useSearchParams();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
+  const [resending, setResending] = useState(false); // State cho nút gửi lại
 
   const {
     control,
@@ -41,22 +44,47 @@ const OTPPage = () => {
     }
   }, [navigate, searchParams]);
 
+  // --- Xử lý Xác thực OTP ---
   const onSubmit = async ({ otp }) => {
     setLoading(true);
     try {
-      const res = await authAPI.verifyOtp({ email, otp });
+      console.log("Gửi OTP:", { email, otp }); // Debug log
+
+      // Sửa 'verifyOtp' thành 'verifyOTP'
+      const res = await authAPI.verifyOTP({ email, otp });
+      // Lấy resetToken từ phản hồi backend
+      // Backend: res.json({ success: true, message: "...", resetToken: "..." })
+      const resetToken = res.data.resetToken;
+
+      if (!resetToken) {
+        throw new Error("Không nhận được token đặt lại mật khẩu!");
+      }
 
       toast.success(res.data.message || "Xác thực thành công! 🌿");
 
-      const resetToken = res.data.resetToken;
-
+      // Chuyển sang trang đặt lại mật khẩu kèm theo token
       navigate(`/reset-password?token=${resetToken}&email=${email}`);
     } catch (err) {
+      console.error("Lỗi verify OTP:", err);
       toast.error(
-        err.response?.data?.message || "OTP không hợp lệ hoặc hết hạn!"
+        err.response?.data?.message || "OTP không hợp lệ hoặc đã hết hạn!"
       );
     } finally {
       setLoading(false);
+    }
+  };
+
+  // --- Xử lý Gửi lại OTP (Không cần quay lại trang trước) ---
+  const handleResendOTP = async () => {
+    if (resending) return;
+    try {
+      setResending(true);
+      await authAPI.forgotPassword({ email }); // Gọi lại API quên mật khẩu
+      toast.info(`Đã gửi lại mã OTP tới ${email} 📩`);
+    } catch (err) {
+      toast.error("Không thể gửi lại OTP. Vui lòng thử lại sau.");
+    } finally {
+      setResending(false);
     }
   };
 
@@ -72,15 +100,21 @@ const OTPPage = () => {
         </Paragraph>
 
         <form onSubmit={handleSubmit(onSubmit)}>
-          {/* Email */}
+          {/* Email (Readonly) */}
           <Input
             prefix={<MailOutlined />}
             value={email}
             disabled
             size="large"
+            style={{
+              marginBottom: 12,
+              backgroundColor: "#f5f5f5",
+              cursor: "not-allowed",
+            }}
           />
 
-          <div style={{ marginTop: 12 }}>
+          {/* OTP Input */}
+          <div style={{ marginBottom: 16 }}>
             <label className={styles.label}>
               <span className={styles.required}>*</span> Mã OTP
             </label>
@@ -94,6 +128,7 @@ const OTPPage = () => {
                   placeholder="Nhập mã OTP gồm 6 số"
                   size="large"
                   maxLength={6}
+                  style={{ letterSpacing: "4px", fontWeight: "bold" }} // Format cho dễ nhìn
                 />
               )}
             />
@@ -107,7 +142,6 @@ const OTPPage = () => {
             size="large"
             loading={loading}
             className={styles.loginBtn}
-            style={{ marginTop: 16 }}
           >
             Xác nhận OTP
           </Button>
@@ -115,9 +149,13 @@ const OTPPage = () => {
 
         <Paragraph className={styles.signupText}>
           Không nhận được mã?{" "}
-          <a href="/forgot" className={styles.signupLink}>
-            Gửi lại OTP
-          </a>
+          <AntdLink
+            onClick={handleResendOTP}
+            disabled={resending}
+            className={styles.signupLink}
+          >
+            {resending ? "Đang gửi..." : "Gửi lại OTP"}
+          </AntdLink>
         </Paragraph>
       </div>
     </AuthLayout>

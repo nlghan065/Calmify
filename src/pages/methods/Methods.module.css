@@ -1,8 +1,10 @@
+/* --- CONTAINER CHUNG --- */
 .container {
-  margin: -20px auto;
+  margin: -40px 0 6px 0;
   padding: 20px;
 }
 
+/* --- TEXT STYLES --- */
 .title {
   font-size: 28px !important;
   font-weight: 700 !important;
@@ -13,15 +15,71 @@
 .subtitle {
   color: #666;
   margin-bottom: 24px;
+  font-size: 16px;
+  line-height: 1.5;
+  max-width: 800px;
 }
 
+.sectionTitle {
+  font-size: 20px;
+  margin-bottom: 12px;
+  font-weight: 600;
+  color: #333;
+  border-left: 4px solid #4b7bec;
+  padding-left: 10px;
+}
+
+/* --- BUTTONS --- */
+/* --- BUTTONS --- */
+
+.backBtn {
+  background: transparent; /* Nền trong suốt */
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 30px;
+  color: #666; /* Màu xám nhẹ */
+  display: inline-flex; /* Để căn giữa icon và chữ */
+  align-items: center;
+  gap: 8px; /* Khoảng cách giữa mũi tên và chữ */
+  padding: 8px 0; /* Tăng vùng bấm một chút */
+  transition: all 0.2s ease-in-out; /* Hiệu ứng mượt mà */
+  font-weight: 500;
+}
+
+.backBtn:hover {
+  color: #4b7bec; /* Đổi sang màu xanh chủ đạo khi hover */
+  transform: translateX(-5px); /* Hiệu ứng lùi nhẹ sang trái */
+}
+
+.backBtn:active {
+  transform: translateX(-2px); /* Hiệu ứng nhấn */
+}
+.button {
+  margin-top: 12px;
+  padding: 8px 14px;
+  background: #4b7bec;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.25s;
+  width: 100%;
+}
+
+.button:hover {
+  background: #3867d6;
+}
+
+/* --- GRID LAYOUT --- */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 20px;
 }
 
-/* === Card === */
+/* --- CARD STYLE (Dùng chung cho cả Category và Exercise) --- */
 .card {
   background: white;
   padding: 16px;
@@ -30,6 +88,8 @@
   box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
   transition: 0.25s ease;
   border: 1px solid #ececec;
+  display: flex;
+  flex-direction: column;
 }
 
 .card:hover {
@@ -42,159 +102,36 @@
   height: 160px;
   object-fit: cover;
   border-radius: 14px;
-
-  /* thêm viền + bóng để giống trang detail */
   border: 1px solid rgba(0, 0, 0, 0.08);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* --- Title --- */
+.cardContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
 .cardTitle {
   margin-top: 14px;
   font-size: 18px;
   font-weight: 600;
+  color: #333;
 }
 
-/* --- Description --- */
 .cardDesc {
   color: #666;
   font-size: 14px;
   min-height: 45px;
   margin-top: 4px;
+  flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-/* --- Button --- */
-.button {
-  margin-top: 12px;
-  padding: 8px 14px;
-  background: #4b7bec;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: 0.25s;
-}
-
-.button:hover {
-  background: #3867d6;
-}
-
-/* === Method Detail Page === */
-
-.headerBox {
-  display: flex;
-  background: white;
-  padding: 20px;
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  margin-bottom: 24px;
-  gap: 20px;
-}
-
-.headerImg {
-  width: 220px;
-  height: 150px;
-  object-fit: cover;
-  border-radius: 12px;
-}
-
-.title {
-  font-size: 22px;
-  font-weight: bold;
-}
-
-.desc {
-  color: #666;
-  margin-top: 5px;
-}
-
-.sectionTitle {
-  font-size: 28px !important;
-  font-weight: 700 !important;
-  color: #2a4d9e !important;
-  margin-bottom: 20px !important;
-}
-
-/* Card giống MethodsPage */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 18px;
-}
-
-.card {
-  background: white;
-  padding: 16px;
-  border-radius: 14px;
-  cursor: pointer;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
-  transition: 0.22s ease;
-}
-
-.card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
-}
-
-.cardImg {
-  width: 100%;
-  height: 150px;
-  object-fit: cover;
-  border-radius: 12px;
-}
-
-.cardTitle {
-  margin-top: 12px;
-  font-size: 18px;
-  font-weight: 600;
-}
-
-.cardDesc {
-  color: #666;
-  font-size: 14px;
-  margin-top: 5px;
-  min-height: 40px;
-}
-
-.button {
-  margin-top: 10px;
-  padding: 8px 14px;
-  background: #4b7bec;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: 0.2s ease;
-}
-
-.button:hover {
-  background: #3867d6;
-}
-
-/* === Lesson Detail Page === */
-.backBtn {
-  background: none;
-  border: none;
-  font-size: 16px;
-  cursor: pointer;
-  margin-bottom: 20px;
-  color: #555;
-}
-
-.backBtn:hover {
-  color: #111;
-}
-
-.title {
-  font-size: 28px !important;
-  font-weight: 700 !important;
-  color: #2a4d9e !important;
-  margin-bottom: 20px !important;
-}
-
-/* -------- KHUNG CHUNG -------- */
-
+/* --- LESSON DETAIL SPECIFIC (Video & Box) --- */
 .section {
   background: #ffffff;
   padding: 20px;
@@ -203,121 +140,98 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
-.sectionTitle {
-  font-size: 20px;
-  margin-bottom: 12px;
-  font-weight: 600;
-  color: #333;
-}
-
-/* -------- VIDEO -------- */
-
 .videoWrapper {
   width: 100%;
-  height: 360px;
+  position: relative;
+  padding-bottom: 56.25%; /* Tỷ lệ 16:9 */
+  height: 0;
+  overflow: hidden;
+  border-radius: 16px;
+  background: #000;
+  margin-bottom: 20px;
 }
 
 .videoWrapper iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
-  border-radius: 16px;
   border: none;
 }
-
-/* -------- DESCRIPTION -------- */
-
-.description {
-  white-space: pre-line;
-  font-size: 16px;
-  line-height: 1.65;
-  color: #444;
-}
-
-.description p {
-  margin-bottom: 10px;
-}
-
-/* -------- RANDOM LESSON -------- */
-
-.randomBox {
-  background: #f5f8ff;
-  padding: 18px;
-  border-radius: 14px;
-  cursor: pointer;
-  border: 2px solid transparent;
-  transition: 0.25s;
-}
-
-.randomBox:hover {
-  border-color: #4c7dff;
-  background: #eef3ff;
-  transform: translateY(-3px);
-}
-
-.randomBox h4 {
-  font-size: 18px;
-  margin-bottom: 8px;
-  font-weight: 600;
-}
-
-.randomBox p {
-  margin: 0;
-  color: #666;
-}
-
-/* --- SUGGESTIONS --- */
-
-.suggestGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 18px;
-  margin-top: 10px;
-}
-
-.suggestCard {
-  background: #fff;
-  border-radius: 16px;
-  padding: 14px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
-  transition: 0.25s;
-}
-
-.suggestCard:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
-}
-
-.suggestImg {
-  width: 100%;
-  height: 130px;
-  object-fit: cover;
+.errorBox {
+  background-color: #fff2f0; /* Nền hồng nhạt */
+  border: 1px solid #ffccc7; /* Viền đỏ nhạt */
+  padding: 30px;
   border-radius: 12px;
-  margin-bottom: 10px;
+  text-align: center;
+  color: #cf1322; /* Chữ đỏ */
+  margin: 20px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
 }
 
-.suggestTitle {
-  font-size: 17px;
-  font-weight: 600;
-  margin-bottom: 6px;
+.errorIcon {
+  font-size: 30px;
+  margin-bottom: 5px;
 }
 
-.suggestDesc {
+.errorTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: #cf1322;
+}
+
+.errorDesc {
   font-size: 14px;
   color: #555;
 }
 
-.suggestButton {
-  width: 100%;
-  padding: 8px 0;
-  border: none;
-  background: #4c7dff;
-  color: #fff;
-  border-radius: 10px;
-  cursor: pointer;
-  font-size: 15px;
-  transition: 0.25s;
+.loadingBox {
+  text-align: center;
+  padding: 40px;
+  font-size: 16px;
+  color: #666;
+  background: #f9f9f9;
+  border-radius: 12px;
+  margin-top: 20px;
 }
 
-.suggestButton:hover {
-  background: #3868e8;
+.detailMaxWidth {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Kiểu chữ cho phần mô tả và hướng dẫn */
+.descriptionText {
+  line-height: 1.6;
+  color: #444;
+  white-space: pre-line; /* Giữ nguyên xuống dòng của văn bản */
+  font-size: 16px;
+}
+
+/* Khối hướng dẫn thực hiện */
+.instructionBox {
+  margin-top: 20px;
+  border-top: 1px solid #eee;
+  padding-top: 15px;
+}
+
+.instructionTitle {
+  margin-bottom: 10px;
+  color: #333;
+  font-weight: 600;
+  font-size: 17px;
+}
+
+/* Nhãn danh mục ở cuối trang */
+.categoryTag {
+  margin-top: 20px;
+  text-align: right;
+  font-style: italic;
+  color: #888;
+  font-size: 14px;
 }

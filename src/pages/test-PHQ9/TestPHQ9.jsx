@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Radio, Button, Typography, Spin, message } from "antd";
+import { Radio, Button, Typography, Spin, message, Modal } from "antd";
 import PageLayout from "@/components/Page/PageLayout";
 import styles from "@/style/Page.module.css";
 import { useNavigate } from "react-router-dom";
-import { fetchPHQ9, submitPHQ9 } from "@/api/services/testAPI";
+import axios from "axios";
 
 const { Title } = Typography;
 
@@ -15,13 +15,29 @@ const TestPHQ9 = () => {
   const [answers, setAnswers] = useState({});
   const [loading, setLoading] = useState(true);
 
+  // 1. LẤY DỮ LIỆU TỪ API
   useEffect(() => {
     const loadTest = async () => {
       try {
-        const data = await fetchPHQ9();
-        setQuestions(data.questions || []);
-        setScales(data.scales || []);
+        const res = await axios.get(
+          "https://wanted-relief-dare-stick.trycloudflare.com/api/tests/PHQ9"
+        );
+        if (res.data.success) {
+          const testData = res.data.data;
+          const questionList = testData.questions || [];
+          setQuestions(questionList);
+
+          if (questionList.length > 0 && questionList[0].options) {
+            const formattedScales = questionList[0].options.map((opt) => ({
+              label: opt.optionText,
+              value: opt.score,
+              id: opt.id,
+            }));
+            setScales(formattedScales);
+          }
+        }
       } catch (error) {
+        console.error("Lỗi tải bài test:", error);
         message.error("Không thể tải bài test. Vui lòng thử lại sau.");
       } finally {
         setLoading(false);
@@ -33,36 +49,93 @@ const TestPHQ9 = () => {
   const handleRadioChange = (e) => {
     const questionId = questions[currentQIndex]?.id;
     if (!questionId) return;
-    setAnswers({ ...answers, [questionId]: e.target.value });
+    const value = e.target.value;
+
+    setAnswers((prev) => ({ ...prev, [questionId]: value }));
+
+    setTimeout(() => {
+      if (currentQIndex < questions.length - 1) {
+        setCurrentQIndex((prev) => prev + 1);
+      } else {
+        handleFinishCheck();
+      }
+    }, 300);
   };
 
-  const handleNext = async () => {
-    if (currentQIndex < questions.length - 1) {
-      setCurrentQIndex(currentQIndex + 1);
-    } else {
-      await finishTest();
-    }
+  const handleFinishCheck = () => {
+    Modal.confirm({
+      title: "Hoàn thành bài test?",
+      content: "Bạn có chắc chắn muốn nộp bài không?",
+      okText: "Nộp bài",
+      cancelText: "Xem lại",
+      onOk: submitTestProcess,
+    });
   };
 
-  const finishTest = async () => {
+  // --- LOGIC NỘP BÀI ---
+  const submitTestProcess = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
-      const answerValues = questions.map((q) => answers[q.id] || 0);
-      const result = await submitPHQ9(answerValues);
+      const formattedAnswers = questions.map((q) => ({
+        questionId: q.id,
+        score: answers[q.id] !== undefined ? answers[q.id] : 0,
+      }));
 
-      localStorage.setItem(
-        "guest_assessment_pending",
-        JSON.stringify({
-          testCode: "PHQ9",
-          answers,
-          timestamp: new Date().toISOString(),
-        })
-      );
+      const payload = {
+        testCode: "PHQ9",
+        answers: formattedAnswers,
+        timestamp: Date.now(),
+      };
 
-      navigate("/result-phq9", { state: { result } });
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        // --- CHƯA LOGIN ---
+        localStorage.setItem("pendingTestSubmission", JSON.stringify(payload));
+
+        // Tính tổng điểm tạm
+        const totalScore = formattedAnswers.reduce(
+          (sum, a) => sum + a.score,
+          0
+        );
+
+        // Tạo dữ liệu tạm để hiển thị ResultPHQ9
+        const tempResult = {
+          totalScore,
+          severity:
+            totalScore <= 4
+              ? "Nhẹ"
+              : totalScore <= 9
+              ? "Vừa"
+              : totalScore <= 14
+              ? "Trầm cảm trung bình"
+              : totalScore <= 19
+              ? "Trầm cảm nặng"
+              : "Rất nặng",
+          advice:
+            "Bạn chưa đăng nhập, kết quả chỉ lưu tạm thời. Đăng nhập để lưu vào hồ sơ sức khỏe và nhận tư vấn chi tiết.",
+        };
+
+        // Điều hướng sang trang ResultPHQ9
+        navigate("/result-phq9", { state: { result: tempResult } });
+      } else {
+        // --- ĐÃ LOGIN ---
+        const res = await axios.post(
+          "https://wanted-relief-dare-stick.trycloudflare.com/api/tests/submit",
+          payload,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        if (res.data.success) {
+          // Truyền kết quả thực từ API sang ResultPHQ9
+          navigate("/result-phq9", { state: { result: res.data.data } });
+        }
+      }
     } catch (error) {
       console.error(error);
-      message.error("Có lỗi khi tính kết quả.");
+      message.error("Có lỗi xảy ra khi nộp bài.");
     } finally {
       setLoading(false);
     }
@@ -73,6 +146,15 @@ const TestPHQ9 = () => {
       <PageLayout>
         <div style={{ textAlign: "center", padding: 50 }}>
           <Spin size="large" />
+        </div>
+      </PageLayout>
+    );
+
+  if (questions.length === 0)
+    return (
+      <PageLayout>
+        <div style={{ textAlign: "center", marginTop: 50 }}>
+          <h3>Không tìm thấy dữ liệu bài test.</h3>
         </div>
       </PageLayout>
     );
@@ -95,7 +177,7 @@ const TestPHQ9 = () => {
         <div className={styles.progressWrapper}>
           <div className={styles.progressHeader}>
             <span>
-              Câu hỏi {currentQIndex + 1} trên {questions.length}
+              Câu hỏi {currentQIndex + 1} / {questions.length}
             </span>
             <span>{progressPercent}%</span>
           </div>
@@ -107,7 +189,9 @@ const TestPHQ9 = () => {
           </div>
         </div>
 
-        <p className={styles.questionText}>{currentQuestion?.content}</p>
+        <p className={styles.questionText}>
+          {currentQuestion?.questionText || currentQuestion?.content}
+        </p>
 
         <Radio.Group
           onChange={handleRadioChange}
@@ -115,7 +199,11 @@ const TestPHQ9 = () => {
           className={styles.radioGroup}
         >
           {scales.map((scale) => (
-            <Radio key={scale.value} value={scale.value}>
+            <Radio
+              key={scale.id || scale.value}
+              value={scale.value}
+              className={styles.radioItem}
+            >
               {scale.label}
             </Radio>
           ))}
@@ -129,15 +217,11 @@ const TestPHQ9 = () => {
           >
             Quay lại
           </Button>
-          <Button
-            className={styles.submitButton}
-            onClick={handleNext}
-            disabled={answers[currentQuestion?.id] === undefined}
-          >
-            {currentQIndex === questions.length - 1
-              ? "Xem kết quả"
-              : "Câu tiếp theo"}
-          </Button>
+          {currentQIndex === questions.length - 1 && (
+            <Button type="primary" onClick={handleFinishCheck}>
+              Hoàn thành
+            </Button>
+          )}
         </div>
       </div>
     </PageLayout>

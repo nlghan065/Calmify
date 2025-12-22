@@ -7,34 +7,36 @@ import { useNavigate } from "react-router-dom";
 export default function ProfilePage() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
+  const [error, setError] = useState(null); // Thêm state lỗi
 
-  // Khởi tạo là chuỗi rỗng để tránh lỗi uncontrolled input
   const [tempNick, setTempNick] = useState("");
   const [previewAvatar, setPreviewAvatar] = useState(null);
 
-  // --- LẤY URL BACKEND ---
   const getBackendRoot = () => {
     const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
     return apiUrl.replace(/\/api$/, "");
   };
 
-  // --- LOAD PROFILE ---
   const loadProfile = async () => {
+    setError(null); // Reset lỗi trước khi gọi
     try {
       const res = await userAPI.getMe();
       const userData = res.data.data;
-      console.log("Check dữ liệu tải về:", userData); // Xem log để chắc chắn có nickname hay chưa
+      console.log("Check dữ liệu tải về:", userData);
 
       setUser(userData);
-
-      // --- SỬA LỖI TẠI ĐÂY ---
-      // Luôn set giá trị cho tempNick, nếu null thì về chuỗi rỗng ""
-      // Điều này giúp ô input hiển thị đúng những gì đang có trong DB
       setTempNick(userData.nickname ? userData.nickname : "");
     } catch (err) {
       console.error("Lỗi load profile:", err);
+
+      // Nếu lỗi 401 (chưa đăng nhập) thì đẩy về login
       if (err.response && err.response.status === 401) {
         navigate("/login");
+      } else {
+        // Các lỗi còn lại (mất mạng, server sập) thì hiện thông báo đẹp
+        setError(
+          "Không thể kết nối đến máy chủ. Vui lòng kiểm tra lại đường truyền hoặc thử lại sau."
+        );
       }
     }
   };
@@ -43,7 +45,6 @@ export default function ProfilePage() {
     loadProfile();
   }, []);
 
-  // --- LƯU NICKNAME ---
   const saveNickname = async () => {
     if (!tempNick.trim()) {
       alert("Vui lòng nhập biệt danh trước khi lưu!");
@@ -51,19 +52,16 @@ export default function ProfilePage() {
     }
 
     try {
-      console.log("Đang gửi nickname lên server:", tempNick);
       await userAPI.updateNickname(user.id, tempNick);
-
-      // Load lại ngay lập tức để đồng bộ
       await loadProfile();
+      window.dispatchEvent(new Event("user-update"));
       alert("Đã lưu biệt danh thành công! ✅");
     } catch (err) {
       console.error(err);
-      alert("Lưu thất bại. Kiểm tra console (F12) để xem lỗi ❌");
+      alert("Lưu thất bại. Có thể do mất kết nối Server ❌");
     }
   };
 
-  // --- UPLOAD AVATAR ---
   const handleAvatarChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -75,6 +73,7 @@ export default function ProfilePage() {
       setTimeout(async () => {
         await loadProfile();
         setPreviewAvatar(null);
+        window.dispatchEvent(new Event("user-update"));
         alert("Cập nhật avatar thành công ✅");
       }, 800);
     } catch (err) {
@@ -83,10 +82,8 @@ export default function ProfilePage() {
     }
   };
 
-  // --- LẤY LINK ẢNH ---
   const getAvatarSrc = () => {
     if (previewAvatar) return previewAvatar;
-
     if (user && user.avatarUrl) {
       if (user.avatarUrl.startsWith("http")) return user.avatarUrl;
       const cleanPath = user.avatarUrl.startsWith("/")
@@ -94,7 +91,6 @@ export default function ProfilePage() {
         : `/${user.avatarUrl}`;
       return `${getBackendRoot()}${cleanPath}`;
     }
-
     return "https://cdn-icons-png.flaticon.com/512/3237/3237472.png";
   };
 
@@ -103,8 +99,43 @@ export default function ProfilePage() {
     navigate("/");
   };
 
-  if (!user) return <div style={{ padding: 20 }}>Đang tải thông tin...</div>;
+  // --- PHẦN RENDER GIAO DIỆN ---
 
+  // 1. Nếu có lỗi -> Hiện khung lỗi đẹp
+  if (error) {
+    return (
+      <LayoutContainer>
+        <div className={styles.container}>
+          <div className={styles.errorBox}>
+            <div className={styles.errorIcon}>🚫</div>
+            <div className={styles.errorTitle}>Mất kết nối</div>
+            <div className={styles.errorDesc}>
+              {error} <br />
+              Hãy chắc chắn rằng Backend đang chạy.
+            </div>
+            <button className={styles.retryBtn} onClick={loadProfile}>
+              Thử lại
+            </button>
+          </div>
+        </div>
+      </LayoutContainer>
+    );
+  }
+
+  // 2. Nếu chưa có user (đang tải) -> Hiện loading đẹp
+  if (!user) {
+    return (
+      <LayoutContainer>
+        <div className={styles.container}>
+          <div className={styles.loadingBox}>
+            ⏳ Đang tải thông tin hồ sơ...
+          </div>
+        </div>
+      </LayoutContainer>
+    );
+  }
+
+  // 3. Nếu có user -> Hiện giao diện chính
   return (
     <LayoutContainer>
       <div className={styles.container}>
@@ -120,7 +151,6 @@ export default function ProfilePage() {
                   e.target.style.display = "none";
                 }}
               />
-              {/* Ảnh backup phòng khi ảnh chính lỗi */}
               <img
                 src="https://cdn-icons-png.flaticon.com/512/3237/3237472.png"
                 className={styles.avatar}
@@ -136,13 +166,13 @@ export default function ProfilePage() {
               <div className={styles.cameraIcon}>📷</div>
             </label>
 
-            {/* INFO - Ô NHẬP NICKNAME */}
+            {/* INFO */}
             <div className={styles.textInfo}>
               <div className={styles.nickRow}>
                 <input
                   type="text"
                   placeholder="Đặt biệt danh..."
-                  value={tempNick} // Luôn binding với state
+                  value={tempNick}
                   onChange={(e) => setTempNick(e.target.value)}
                   className={styles.nickInput}
                 />
@@ -167,7 +197,6 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* ... PHẦN THÔNG TIN CÁ NHÂN GIỮ NGUYÊN ... */}
         <div className={styles.section}>
           <h3 className={styles.sectionTitle}>Thông tin cá nhân</h3>
           <div className={styles.infoGrid}>

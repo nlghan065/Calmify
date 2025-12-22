@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styles from "./Dashboard.module.css";
+import { toast } from "react-toastify"; // Import thêm cái này
 
 export const EMOTIONS = [
   { id: 1, icon: "😭", label: "Rất buồn" },
@@ -18,22 +19,26 @@ export default function EmotionCheck({ onSubmit }) {
   };
 
   const handleSend = () => {
+    // SỬA: Dùng toast thay vì alert cho đồng bộ
     if (!selectedEmotion) {
-      alert("Vui lòng chọn cảm xúc!");
+      toast.warning("Bạn ơi, hãy chọn một cảm xúc nhé! 🤔");
       return;
     }
 
-    // gửi đúng key BE yêu cầu: { mood, note }
+    // Gửi đúng key BE yêu cầu: { mood, note }
     const dataToSend = {
-      mood: selectedEmotion.icon,
+      mood: selectedEmotion.icon, // Gửi icon (ví dụ: '😭')
       note: note.trim(),
     };
 
-    onSubmit?.(dataToSend);
+    // Gọi hàm từ Parent truyền xuống
+    if (onSubmit) {
+      onSubmit(dataToSend);
 
-    // reset form
-    setSelectedEmotion(null);
-    setNote("");
+      // Reset form sau khi gửi
+      setSelectedEmotion(null);
+      setNote("");
+    }
   };
 
   return (
@@ -50,19 +55,27 @@ export default function EmotionCheck({ onSubmit }) {
               selectedEmotion?.id === e.id ? styles.activeEmotion : ""
             }`}
             onClick={() => handleSelect(e)}
+            title={e.label} // Thêm title để hover thấy chữ
           >
             {e.icon}
           </button>
         ))}
       </div>
+      {/* Hiển thị label cảm xúc đang chọn cho rõ ràng */}
+      {selectedEmotion && (
+        <p style={{ textAlign: "center", fontWeight: "bold", color: "#555" }}>
+          {selectedEmotion.label}
+        </p>
+      )}
 
       <textarea
         value={note}
         onChange={(e) => setNote(e.target.value)}
         placeholder="Ghi chú ngắn về cảm xúc hôm nay..."
+        className={styles.textarea} // Đảm bảo CSS có class này
       />
 
-      <button className={styles.submitBtn} onClick={handleSend}>
+      <button className={styles.submitBtn} onClick={handleSend} type="button">
         Gửi cảm xúc
       </button>
     </div>

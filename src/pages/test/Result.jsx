@@ -10,141 +10,111 @@ const { Title, Paragraph } = Typography;
 const ResultPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { id } = useParams();
+  const { id } = useParams(); // Mã bài test (PHQ9)
   const { score, answers } = location.state || {};
-  const [analysis, setAnalysis] = useState(null);
+
   const [saving, setSaving] = useState(false);
   const hasSaved = useRef(false);
 
-  const analyzeResult = (testCode, totalScore) => {
-    let severity = "Chưa xác định",
-      message = "Kết quả đã được ghi nhận.",
-      color = "#1890ff";
-    if (testCode === "PHQ9") {
-      if (totalScore <= 4) {
-        severity = "Không trầm cảm";
-        color = "green";
-        message = "Tâm trạng của bạn khá ổn định";
-      } else if (totalScore <= 9) {
-        severity = "Trầm cảm nhẹ";
-        color = "#faad14";
-        message = "Bạn có chút lo âu, hãy thư giãn nhé.";
-      } else if (totalScore <= 14) {
-        severity = "Trầm cảm vừa";
-        color = "#fa8c16";
-        message = "Nên chia sẻ với bạn bè hoặc chuyên gia tâm lý.";
-      } else if (totalScore <= 19) {
-        severity = "Trầm cảm trung bình nặng";
-        color = "#ff4d4f";
-        message = "Cần sự hỗ trợ từ chuyên gia y tế.";
-      } else {
-        severity = "Trầm cảm nặng";
-        color = "#cf1322";
-        message = "Hãy tìm kiếm sự giúp đỡ ngay lập tức.";
-      }
-    } else if (testCode === "RADS") {
-      if (totalScore < 30) {
-        severity = "Bình thường";
-        color = "green";
-      } else if (totalScore < 50) {
-        severity = "Nguy cơ nhẹ";
-        color = "#faad14";
-      } else {
-        severity = "Nguy cơ cao";
-        color = "#ff4d4f";
-        message = "Kết quả cho thấy bạn đang gặp nhiều khó khăn tâm lý.";
-      }
-    } else if (testCode === "DASS21") {
-      if (totalScore < 21) {
-        severity = "Bình thường";
-        color = "green";
-      } else if (totalScore < 42) {
-        severity = "Căng thẳng vừa";
-        color = "#faad14";
-      } else {
-        severity = "Căng thẳng nghiêm trọng";
-        color = "#ff4d4f";
-      }
-    }
-    return { severity, message, color };
+  // Logic hiển thị màu sắc (Client only visualization)
+  const getSeverityInfo = (s) => {
+    if (s <= 4)
+      return { text: "Bình thường", color: "green", msg: "Tâm trạng ổn định." };
+    if (s <= 9)
+      return { text: "Nhẹ", color: "#faad14", msg: "Cần theo dõi thêm." };
+    if (s <= 14)
+      return { text: "Vừa", color: "#fa8c16", msg: "Nên tư vấn chuyên gia." };
+    return { text: "Nặng", color: "#ff4d4f", msg: "Cần hỗ trợ y tế ngay." };
   };
 
-  useEffect(() => {
-    if (score === undefined) return;
-    const result = analyzeResult(id, score);
-    setAnalysis(result);
+  const info = getSeverityInfo(score || 0);
 
-    const saveResult = async () => {
-      if (hasSaved.current) return;
+  useEffect(() => {
+    if (score === undefined || hasSaved.current) return;
+
+    const saveToBackend = async () => {
       hasSaved.current = true;
       setSaving(true);
       try {
+        // CHUYỂN ĐỔI DỮ LIỆU ĐỂ KHỚP VỚI BACKEND SERVICE
+        // Backend cần mảng: [{ score: 1 }, { score: 2 }]
+        const formattedAnswers = Object.values(answers).map((val) => ({
+          score: parseInt(val),
+        }));
+
         await saveTestResult({
           testCode: id,
-          score,
-          severity: result.severity,
-          details: JSON.stringify(answers),
+          answers: formattedAnswers,
         });
+      } catch (error) {
+        console.error("Lỗi lưu kết quả:", error);
       } finally {
         setSaving(false);
       }
     };
-    saveResult();
+
+    saveToBackend();
   }, [id, score, answers]);
 
-  if (score === undefined)
+  if (score === undefined) {
     return (
       <LayoutContainer>
         <AntResult
           status="404"
-          title="Không tìm thấy kết quả"
-          subTitle="Bạn cần làm bài test trước khi xem kết quả."
+          title="Không có kết quả"
           extra={
-            <Button type="primary" onClick={() => navigate("/category")}>
-              Về danh sách
-            </Button>
+            <Button onClick={() => navigate("/test")}>Về danh sách</Button>
           }
         />
       </LayoutContainer>
     );
+  }
 
   return (
     <LayoutContainer>
       <div className={styles.testContainer}>
-        <Title level={2} className={styles.titleCenter}>
-          Kết Quả Bài Test {id}
+        <Title level={2} style={{ textAlign: "center" }}>
+          Kết Quả: {id}
         </Title>
+
         <Card
           className={styles.resultBox}
-          style={{ borderTop: `5px solid ${analysis?.color || "#ccc"}` }}
+          style={{ borderTop: `5px solid ${info.color}` }}
         >
-          {saving && <Spin size="small" className={styles.savingSpin} />}
-          <div className={styles.score} style={{ color: analysis?.color }}>
+          {saving && (
+            <div style={{ textAlign: "center", marginBottom: 10 }}>
+              <Spin /> Đang lưu...
+            </div>
+          )}
+
+          <div className={styles.score} style={{ color: info.color }}>
             {score}
           </div>
-          <p className={styles.scoreLabel}>Tổng điểm của bạn</p>
-          <Title
-            level={3}
-            className={styles.severity}
-            style={{ color: analysis?.color }}
-          >
-            {analysis?.severity}
+          <p className={styles.scoreLabel}>Tổng điểm</p>
+
+          <Title level={3} style={{ color: info.color, textAlign: "center" }}>
+            {info.text}
           </Title>
-          <Paragraph className={styles.message}>{analysis?.message}</Paragraph>
+          <Paragraph style={{ textAlign: "center" }}>{info.msg}</Paragraph>
+
           <div className={styles.disclaimer}>
-            "Kết quả này chỉ mang tính chất tham khảo. Luôn tìm kiếm lời khuyên
-            từ bác sĩ hoặc chuyên gia tâm lý nếu bạn cảm thấy bất ổn."
+            Kết quả này chỉ mang tính tham khảo.
           </div>
         </Card>
+
         <div className={styles.buttonGroup}>
-          <Button size="large" onClick={() => navigate("/category")}>
-            Làm bài test khác
+          <Button
+            size="large"
+            type="primary"
+            onClick={() => navigate("/category")}
+          >
+            Làm bài khác
           </Button>
-          <Button type="primary" size="large" onClick={() => navigate("/chat")}>
-            Trò chuyện với AI
+          <Button size="large" type="primary" onClick={() => navigate("/chat")}>
+            Chat với AI
           </Button>
           <Button size="large" onClick={() => navigate("/statistics")}>
-            Lịch sử & Biểu đồ
+            Xem thống kê
           </Button>
         </div>
       </div>

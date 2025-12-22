@@ -1,5 +1,10 @@
+/* --- CONTAINER --- */
 .container {
-  padding: 20px;
+  max-width: 1200px;
+  margin: -20px auto;
+  padding: 1px 0 20px 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  min-height: 100vh;
 }
 
 .title {
@@ -10,142 +15,168 @@
 }
 
 .subtitle {
+  font-size: 14px;
   color: #666;
+  margin-bottom: 25px;
+}
+
+/* --- BOX BIỂU ĐỒ --- */
+.chartBox {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  margin-bottom: 30px;
+  border: 1px solid #f0f0f0;
+  min-height: 400px;
+}
+
+/* --- BỘ LỌC BUTTON --- */
+.filterGroup {
+  display: flex;
+  gap: 10px;
   margin-bottom: 20px;
 }
 
-/* ==== TOP CARDS ==== */
-.statsGrid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 15px;
-  margin-bottom: 30px;
-}
-
-.card {
-  background: #fff;
-  border-radius: 8px;
-  padding: 15px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-}
-
-.value {
-  font-size: 22px;
-  font-weight: 600;
-}
-
-.trendUp {
-  color: #4caf50;
-}
-
-.trendDown {
-  color: #e53935;
-}
-
-/* ==== CHART ==== */
-.chartBox {
-  background: #fff;
-  padding: 15px;
-  border-radius: 8px;
-  margin-bottom: 30px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-}
-
-.chartHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-/* Filter chung cho nút */
-.filterButton {
-  background-color: #f0f4ff;
-  color: #3f82ff;
-  border: none;
-  border-radius: 6px;
-  padding: 6px 14px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: all 0.2s ease-in-out;
-}
-
-.filterButton:hover {
-  background-color: #d6e4ff;
-}
-
-/* Filter Ngày/Tuần/Tháng/Năm */
-/* ==== Filter Ngày/Tuần/Tháng/Năm ==== */
 .filterGroup button {
-  background-color: #f0f4ff; /* nền mặc định nhạt */
-  color: #3f82ff; /* chữ xanh */
-  border: none;
-  border-radius: 6px;
-  padding: 6px 14px;
+  padding: 8px 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 20px;
+  background-color: #fff;
+  color: #555;
+  font-size: 14px;
   cursor: pointer;
-  font-weight: 500;
-  transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease;
 }
 
 .filterGroup button:hover {
-  background-color: #d6e4ff; /* hover nhạt hơn */
+  background-color: #f5f5f5;
 }
 
-.filterGroup .activeFilter {
-  background-color: #3f82ff; /* xanh biển */
-  color: #fff; /* chữ trắng */
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15); /* bóng nhẹ */
+.filterGroup button.active {
+  background-color: #3f82ff;
+  color: #fff;
+  border-color: #3f82ff;
+  box-shadow: 0 2px 5px rgba(63, 130, 255, 0.3);
 }
 
-/* Filter thời gian trong ngày */
-/* ==== Filter thời gian trong ngày ==== */
-.timeFilter button {
-  background-color: #f0f4ff; /* nền mặc định nhạt */
-  color: #3f82ff; /* chữ xanh */
-  border: none;
-  border-radius: 6px;
-  padding: 6px 14px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: all 0.2s ease-in-out;
+/* --- TRẠNG THÁI --- */
+.loading {
+  text-align: center;
+  padding: 50px;
+  color: #888;
+  font-style: italic;
 }
 
-.timeFilter button:hover {
-  background-color: #d6e4ff; /* hover nhạt hơn */
-}
-
-.timeFilter .activeTime {
-  background-color: #3f82ff; /* xanh biển */
-  color: #fff; /* chữ trắng */
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15); /* bóng nhẹ */
-}
-
-/* ==== DISTRIBUTION ==== */
-.distributionBox {
-  background: #fff;
-  padding: 15px;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-}
-
-.row {
-  margin-bottom: 10px;
-}
-
-.rowHeader {
+.noData {
   display: flex;
-  justify-content: space-between;
-  margin-bottom: 5px;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+  color: #999;
 }
 
-.progress {
-  height: 12px;
-  background-color: #eee;
-  border-radius: 6px;
-  overflow: hidden;
+/* --- BOX LỊCH SỬ TEST --- */
+.testHistoryBox {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid #f0f0f0;
 }
 
-.progressFill {
-  height: 100%;
-  border-radius: 6px;
+.testHistoryBox h3 {
+  font-size: 18px;
+  color: #3f82ff;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.emptyText {
+  font-style: italic;
+  color: #888;
+  padding: 10px;
+}
+
+/* --- BẢNG (TABLE) --- */
+.testTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.testTable th {
+  text-align: left;
+  padding: 15px;
+  background-color: #f9fafc;
+  color: #444;
+  font-weight: 600;
+  border-bottom: 2px solid #eee;
+}
+
+.testTable td {
+  padding: 15px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+/* --- DÒNG CHÍNH (MAIN ROW) --- */
+.mainRow {
+  background-color: #fff;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.mainRow:hover {
+  background-color: #f0f7ff; /* Xanh rất nhạt khi hover */
+}
+
+.testNameCell {
+  display: flex;
+  align-items: center;
+}
+
+.testNameText {
+  font-weight: 500;
+  color: #333;
+}
+
+/* Mũi tên */
+.arrow {
+  display: inline-block;
+  margin-right: 12px;
+  font-size: 12px;
+  color: #3f82ff;
+  transition: transform 0.2s ease;
+}
+
+.arrowDown {
+  transform: rotate(90deg); /* Xoay xuống khi mở */
+}
+
+/* --- DÒNG CON (SUB ROW) --- */
+.subRow {
+  background-color: #fafafa; /* Nền xám nhẹ để phân biệt */
+}
+
+.subRow td {
+  border-bottom: 1px dashed #e0e0e0;
+  color: #666;
+  font-size: 0.95em;
+}
+
+.subRowLabel {
+  padding-left: 40px !important; /* Thụt đầu dòng cho chữ "Lần 1" */
+  color: #888;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .testTable th,
+  .testTable td {
+    padding: 10px 5px;
+    font-size: 13px;
+  }
+  .subRowLabel {
+    padding-left: 20px !important;
+  }
 }

@@ -3,11 +3,15 @@
 .dashboard {
   display: flex;
   flex-direction: column;
+  margin: 0 0 34px 0;
   gap: 24px;
   background: var(--color-bg);
   font-family: "Inter", sans-serif;
   padding-bottom: 20px;
+
+  /* Sửa đoạn này */
   min-height: auto;
+  flex: 1;
 }
 
 /* ===== Ô cảm xúc chính ===== */
@@ -183,80 +187,103 @@ textarea:focus {
 }
 
 /* ===== Biểu đồ mô phỏng ===== */
-.chartMock {
+/* Khung Card tổng quan */
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  border: 1px solid #f0f0f0;
   display: flex;
-  gap: 10px;
-  align-items: flex-end;
-  margin-top: 12px;
-  height: 70px;
+  flex-direction: column;
+  height: 100%; /* Đảm bảo chiều cao đầy đặn */
 }
 
-.chartMock div {
-  flex: 1;
-  background: linear-gradient(180deg, #b9ccff, #dfe7ff);
-  border-radius: 10px;
-  height: calc(25px + 45px * var(--h, 0.5));
-  transition: height 0.3s ease;
-}
-
-.emotionCard {
-  background: #ffffff;
-  padding: 32px;
-  margin-top: -10px;
-  border-radius: 18px;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
-}
-
-.emotionCard h2 {
-  font-size: 22px;
-  font-weight: 700;
-  color: #2a4d9e;
-  margin: -10px 0 4px;
-}
-
-.emotionCard h3 {
+.card h4 {
+  margin: 0 0 8px 0;
   font-size: 18px;
   color: #333;
-  margin-bottom: 1px;
+  font-weight: 700;
 }
 
-.emotionSelect p {
+.card p {
+  margin: 0 0 24px 0;
+  color: #888;
   font-size: 14px;
-  color: #666;
 }
 
-.emojiGroup {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  margin: 20px 0;
-}
-
-.emojiGroup span {
-  font-size: 40px;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-}
-
-.emojiGroup span:hover {
-  transform: scale(1.2);
-}
-
+/* Bao quanh biểu đồ */
 .chartWrapper {
-  margin-top: 40px;
-  width: 100%;
+  flex: 1; /* Chiếm phần còn lại của card */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 180px; /* Chiều cao tối thiểu cho đẹp */
 }
 
+/* Khu vực các cột (Bars) */
+.chartMock {
+  display: flex;
+  align-items: flex-end; /* Căn đáy để cột mọc lên trên */
+  justify-content: space-between; /* Chia đều khoảng cách */
+  gap: 12px; /* Khoảng cách giữa các cột */
+  height: 100px; /* Chiều cao tối đa của biểu đồ */
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee; /* Đường kẻ trục hoành */
+}
+
+/* Từng cột biểu đồ */
+.chartMock div {
+  flex: 1; /* Độ rộng tự co giãn đều nhau */
+  background-color: #3f82ff; /* Màu xanh chủ đạo */
+  border-radius: 4px 4px 0 0; /* Bo tròn 2 góc trên */
+  opacity: 0.8;
+  transition: all 0.3s ease; /* Hiệu ứng mượt mà khi load */
+  cursor: pointer;
+  position: relative;
+
+  /* QUAN TRỌNG: Tính chiều cao dựa trên biến --h */
+  /* --h chạy từ 0 đến 1. Nhân với 100% để ra chiều cao thực */
+  height: calc(var(--h, 0) * 70%);
+}
+
+/* Hover vào cột */
+.chartMock div:hover {
+  opacity: 1;
+  transform: scaleY(1.05); /* Phóng to nhẹ khi hover */
+  transform-origin: bottom; /* Phóng to từ gốc dưới */
+}
+
+/* Tooltip hiển thị điểm khi hover (Dùng CSS thuần) */
+.chartMock div:hover::after {
+  content: attr(data-tooltip); /* Lấy nội dung từ attribute data-tooltip */
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #333;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  margin-bottom: 5px;
+  z-index: 10;
+  opacity: 0.9;
+}
+
+/* Nhãn ngày (T2, T3...) */
 .chartLabels {
   display: flex;
   justify-content: space-between;
-  margin-top: 6px;
-  padding: 0 2px;
+  margin-top: 10px;
+  padding: 0 5px; /* Căn chỉnh nhẹ cho khớp với cột */
 }
 
 .chartLabels span {
-  font-size: 12px;
-  color: #555;
-  width: 100%;
+  flex: 1;
   text-align: center;
+  font-size: 12px;
+  color: #666;
+  font-weight: 500;
 }

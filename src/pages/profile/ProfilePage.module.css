@@ -9,6 +9,7 @@
   color: #333;
   display: flex;
   flex-direction: column;
+  border-radius: 18px;
   gap: 30px;
   background-color: #f7f8fa;
 }
@@ -260,4 +261,63 @@
     opacity: 0;
     transform: translateY(-10px);
   }
+}
+
+.errorBox {
+  background-color: #fff2f0; /* Nền hồng nhạt */
+  border: 1px solid #ffccc7; /* Viền đỏ nhạt */
+  padding: 40px;
+  border-radius: 12px;
+  text-align: center;
+  color: #cf1322; /* Chữ đỏ */
+  margin: 20px auto;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+}
+
+.errorIcon {
+  font-size: 40px;
+  margin-bottom: 5px;
+}
+
+.errorTitle {
+  font-size: 20px;
+  font-weight: 700;
+  color: #cf1322;
+}
+
+.errorDesc {
+  font-size: 15px;
+  color: #555;
+  line-height: 1.5;
+}
+
+.retryBtn {
+  background: #ff4d4f;
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+  margin-top: 10px;
+}
+
+.retryBtn:hover {
+  background: #ff7875;
+}
+
+.loadingBox {
+  text-align: center;
+  padding: 50px;
+  font-size: 16px;
+  color: #666;
+  background: #f9f9f9;
+  border-radius: 12px;
+  margin: 20px 0;
 }
