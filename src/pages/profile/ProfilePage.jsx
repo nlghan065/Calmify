@@ -81,6 +81,18 @@ export default function ProfilePage() {
       alert("Cập nhật avatar thất bại ❌");
     }
   };
+  const maskEmail = (email) => {
+    if (!email || !email.includes("@")) return email;
+
+    const [name, domain] = email.split("@");
+
+    // số ký tự muốn che (3–5)
+    const maskLength = Math.min(5, Math.max(3, Math.floor(name.length / 2)));
+
+    const maskedName = "*".repeat(maskLength) + name.slice(maskLength);
+
+    return `${maskedName}@${domain}`;
+  };
 
   const getAvatarSrc = () => {
     if (previewAvatar) return previewAvatar;
@@ -186,7 +198,7 @@ export default function ProfilePage() {
               </div>
 
               <p className={styles.userID}>ID: {user.id}</p>
-              <p className={styles.email}>Email: {user.email}</p>
+              <p className={styles.email}>Email: {maskEmail(user.email)}</p>
               <p className={styles.joinDate}>
                 Tham gia từ:{" "}
                 {user.createdAt

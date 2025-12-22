@@ -5,6 +5,8 @@ import styles from "@/style/Page.module.css";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
+const BASE_URL = import.meta.env.VITE_API_URL;
+
 const { Title } = Typography;
 
 const TestPHQ9 = () => {
@@ -19,9 +21,8 @@ const TestPHQ9 = () => {
   useEffect(() => {
     const loadTest = async () => {
       try {
-        const res = await axios.get(
-          "https://wanted-relief-dare-stick.trycloudflare.com/api/tests/PHQ9"
-        );
+        const res = await axios.get(`${BASE_URL}/tests/PHQ9`);
+
         if (res.data.success) {
           const testData = res.data.data;
           const questionList = testData.questions || [];
@@ -120,13 +121,9 @@ const TestPHQ9 = () => {
         navigate("/result-phq9", { state: { result: tempResult } });
       } else {
         // --- ĐÃ LOGIN ---
-        const res = await axios.post(
-          "https://wanted-relief-dare-stick.trycloudflare.com/api/tests/submit",
-          payload,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        const res = await axios.post(`${BASE_URL}/tests/submit`, payload, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
         if (res.data.success) {
           // Truyền kết quả thực từ API sang ResultPHQ9
