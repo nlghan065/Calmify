@@ -32,13 +32,14 @@ import Category from "./pages/test/Category";
 import TestInfo from "./pages/test/TestInfo";
 import TestStart from "./pages/test/TestStart";
 import Result from "./pages/test/Result";
-
+import DemoPlacementUI from "./pages/test";
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         {/* Trang loading / home */}
-        <Route path="/" element={<Loading />} />
+        <Route path="/" element={<DemoPlacementUI />} />
+
         <Route path="/home" element={<Home />} />
         {/* Auth */}
         <Route path="/login" element={<LoginPage />} />

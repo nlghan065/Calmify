@@ -1,16 +1,64 @@
-# React + Vite
+TÊN DỰ ÁN: CALMIFY – FRONTEND
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+1. MÔ TẢ
+   Calmify là ứng dụng hỗ trợ sức khỏe tinh thần, cho phép người dùng:
 
-Currently, two official plugins are available:
+- Đăng nhập / đăng ký
+- Làm bài test tâm lý (PHQ-9)
+- Chat hỗ trợ tinh thần
+- Xem thống kê cảm xúc
+- Truy cập hotline hỗ trợ
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Sinh viên phụ trách: Frontend
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+2. CÔNG NGHỆ SỬ DỤNG (TOOLS & FRAMEWORKS)
 
-## Expanding the ESLint configuration
+- Node.js (v18+)
+- ReactJS
+- Vite
+- Ant Design (UI)
+- Axios
+- React Router DOM
+- React Hook Form
+- ESLint
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+3. HƯỚNG DẪN CÀI ĐẶT & CHẠY CHƯƠNG TRÌNH
+
+Bước 1: Cài đặt NodeJS  
+Tải tại: https://nodejs.org
+
+Bước 2: Giải nén source code
+
+Bước 3: Mở terminal tại thư mục FRONTEND và chạy:
+
+npm install
+
+Bước 4: Chạy chương trình:
+
+npm run dev
+
+Bước 5: Truy cập trên trình duyệt:
+
+http://localhost:5173
+
+---
+
+4. CẤU TRÚC THƯ MỤC CHÍNH
+
+- src/api : Giao tiếp API
+- src/pages : Các trang chính (auth, test, profile, ...)
+- src/components : Component dùng chung
+- src/Layout : Layout, Header, Sidebar
+- src/context : Quản lý state toàn cục
+- src/style : CSS / Module CSS
+
+---
+
+5. GHI CHÚ
+
+- Thư mục node_modules không được đính kèm theo yêu cầu
+- File .env đã được loại bỏ thông tin nhạy cảm (nếu có)

@@ -214,11 +214,6 @@ const TestPHQ9 = () => {
           >
             Quay lại
           </Button>
-          {currentQIndex === questions.length - 1 && (
-            <Button type="primary" onClick={handleFinishCheck}>
-              Hoàn thành
-            </Button>
-          )}
         </div>
       </div>
     </PageLayout>
