@@ -9,7 +9,7 @@ TÊN DỰ ÁN: CALMIFY – FRONTEND
 - Xem thống kê cảm xúc
 - Truy cập hotline hỗ trợ
 
-Sinh viên phụ trách: Frontend
+Sinh viên phụ trách: Gia Hân
 
 ---
 
